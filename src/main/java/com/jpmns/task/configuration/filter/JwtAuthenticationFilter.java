@@ -1,4 +1,4 @@
-package com.jpmns.task.core.external.security.filter;
+package com.jpmns.task.configuration.filter;
 
 import java.io.IOException;
 import java.util.Collections;
