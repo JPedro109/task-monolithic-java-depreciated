@@ -288,6 +288,77 @@ return entity;
 
 ---
 
+# Gerenciamento Transacional
+
+Quando um caso de uso coordena **mais de uma operação de persistência**, essas operações devem ocorrer dentro de uma única transação, garantindo atomicidade ("tudo ou nada") e uma visão consistente dos dados.
+
+O gerenciamento transacional é controlado pela anotação `@Transactional` do Spring (`org.springframework.transaction.annotation.Transactional`), aplicada diretamente no método `execute` do caso de uso.
+
+> **Exceção arquitetural consciente.** `@Transactional` é a única dependência de framework de persistência permitida na camada Application. A fronteira transacional é, por natureza, uma responsabilidade de orquestração do caso de uso, e abstraí-la por uma porta própria (ex.: `TransactionExecutor`/`UnitOfWork`) adicionaria indireção sem ganho prático nesta arquitetura. Essa exceção está registrada também no documento de arquitetura.
+
+## Critério
+
+O critério é o **número de invocações de métodos de porta de persistência dentro do `execute`** — não o número de comandos SQL gerados. Uma única invocação de porta pode gerar vários SQLs e ainda assim contar como uma só chamada.
+
+As seguintes regras devem ser respeitadas:
+
+- **1 invocação de porta de persistência** → sem `@Transactional`. A operação isolada já é atômica pela transação do próprio Spring Data; anotar não é erro, mas não agrega.
+- **2 ou mais invocações, todas de leitura** → `@Transactional(readOnly = true)`. Garante que todas as leituras enxerguem o mesmo snapshot consistente e sinaliza a intenção de leitura.
+- **2 ou mais invocações, contendo ao menos uma escrita** → `@Transactional`. É o caso crítico: sem a transação abrangente, uma falha após a primeira escrita deixaria o banco em estado parcial e irreversível.
+
+## Por que o número de chamadas é o gatilho
+
+Com uma única chamada não há nada a coordenar. A partir de duas, surge o risco de o conjunto falhar no meio: a primeira operação commita, a segunda falha, e o banco fica inconsistente. `@Transactional` transforma as N operações em um bloco indivisível, confirmado por inteiro no commit único do fim do método, ou revertido por inteiro no rollback.
+
+## ✔ Correto
+
+```java
+@Service
+public class UpdateSampleUseCase {
+
+    @Transactional
+    public SampleOutput execute(UpdateSampleInput input) {
+        var sample = repository.findById(IdValueObject.of(input.id()).getValueOrThrow())
+                .orElseThrow(SampleNotFoundException::new);
+
+        sample.updateName(input.name());
+
+        var saved = repository.save(sample);
+
+        return new SampleOutput(saved.getId().asString(), saved.getName().asString());
+    }
+}
+```
+
+```java
+@Service
+public class ListSamplesUseCase {
+
+    @Transactional(readOnly = true)
+    public List<SampleOutput> execute(ListSamplesInput input) {
+        ...
+    }
+}
+```
+
+## ❌ Incorreto
+
+```java
+@Service
+public class CreateSampleUseCase {
+
+    // Duas escritas sem transação abrangente: se a segunda falhar,
+    // a primeira já foi confirmada e o estado fica parcial.
+    public SampleOutput execute(CreateSampleInput input) {
+        repository.save(firstEntity);
+        auditRepository.save(secondEntity);
+        ...
+    }
+}
+```
+
+---
+
 # Dependências
 
 A camada Application pode depender apenas da camada Domain e de contratos definidos pela própria Application.
@@ -299,7 +370,7 @@ Não é permitido depender de:
 - Responses;
 - Models de persistência;
 - Repositórios concretos;
-- Frameworks de persistência;
+- Frameworks de persistência, com a **única exceção** da anotação `@Transactional` do Spring para o gerenciamento transacional dos casos de uso (ver seção "Gerenciamento Transacional");
 - Componentes da camada Infrastructure.
 
 ---
@@ -318,3 +389,4 @@ Toda implementação da camada Application deve respeitar os seguintes princípi
 - Entidades pertencem ao Domain.
 - Componentes da Infrastructure nunca devem ser acessados diretamente.
 - O retorno dos casos de uso deve ocorrer através de DTOs de saída.
+- Casos de uso com 2 ou mais invocações de portas de persistência devem ser transacionais: `@Transactional(readOnly = true)` quando forem todas de leitura e `@Transactional` quando houver ao menos uma escrita. A anotação `@Transactional` do Spring é a única dependência de framework de persistência permitida nesta camada.

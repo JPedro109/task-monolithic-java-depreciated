@@ -17,6 +17,7 @@ Toda implementação deve respeitar os seguintes princípios:
 * A comunicação com a infraestrutura ocorre através de contratos (portas) bem definidos.
 * Dependências de infraestrutura nunca devem ser representadas por implementações concretas quando uma porta puder representar a dependência.
 * Contratos existem para inverter dependências entre camadas (portas e adaptadores), não para componentes de implementação única como os casos de uso.
+* A única exceção à proibição de dependência de frameworks de persistência na camada Application é a anotação `@Transactional` do Spring, aplicada aos casos de uso que coordenam mais de uma operação de persistência. A fronteira transacional é uma responsabilidade de orquestração do caso de uso, e abstraí-la por uma porta dedicada adicionaria indireção sem ganho prático. O critério e as regras estão definidos no documento de convenções da camada Application.
 
 ---
 
