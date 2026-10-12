@@ -36,7 +36,7 @@ As seguintes regras devem ser respeitadas:
 - Todos os métodos públicos devem ser testados.
 - Devem ser testados cenários de sucesso e de falha.
 - Testes devem validar o objeto retornado e não apenas a ausência de exceções.
-- Quando o Value Object utilizar `Result<T>`, devem ser testados tanto `Result.ok(...)` quanto `Result.fail(...)`.
+- Quando o Value Object utilizar `Result<T>`, devem ser testados tanto `Result.success(...)` quanto `Result.fail(...)`.
 - Fixtures devem ser utilizadas sempre que houver reutilização de dados de teste.
 
 ---
@@ -66,8 +66,8 @@ class SampleNameValueObjectTest {
 
         var result = SampleNameValueObject.of(sampleName);
 
-        assertTrue(result.isSuccess());
-        assertEquals(sampleName, result.getValue().value());
+        assertFalse(result.isFail());
+        assertEquals(sampleName, result.getValue().asString());
     }
 
     @ParameterizedTest
@@ -145,7 +145,7 @@ Todo teste de Value Object deve respeitar os seguintes princípios:
 
 - Cada Value Object possui sua própria classe de teste.
 - Cenários válidos e inválidos devem ser testados.
-- Todo `Result.ok(...)` e `Result.fail(...)` deve ser validado.
+- Todo `Result.success(...)` e `Result.fail(...)` deve ser validado.
 - Um cenário por teste.
 - Testes devem validar explicitamente o resultado obtido.
 - Fixtures devem ser utilizadas quando houver reutilização de dados.
@@ -214,19 +214,14 @@ class SampleEntityTest {
     @Test
     @DisplayName("Should create sample when data is valid")
     void shouldCreateSampleWhenDataIsValid() {
-        var id = "1";
-        var name = "1";
-        var value = "1";
-
-        var sample = new SampleEntity(id, name, value);
+        var sample = SampleEntityFixture.aSample();
 
         var idValueObject = sample.getId();
-        var nameValueObject = sample.getName();
         var valueValueObject = sample.getValue();
+
         assertThat(idValueObject).isNotNull();
-        assertThat(idValueObject.asString()).isEqualTo("1");
-        assertThat(nameValueObject.asString()).isEqualTo("Sample");
-        assertThat(valueValueObject.asString()).isEqualTo("Value");
+        assertThat(idValueObject.asString()).isEqualTo(SampleEntityFixture.DEFAULT_ID);
+        assertThat(valueValueObject.asString()).isEqualTo(SampleEntityFixture.DEFAULT_VALUE);
     }
 }
 ```

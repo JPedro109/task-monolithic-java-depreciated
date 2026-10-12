@@ -17,7 +17,7 @@ Toda implementação nesta camada deve priorizar:
 - Imutabilidade sempre que possível;
 - Independência de detalhes técnicos.
 
-A camada Domain **não pode depender** das camadas de Application, Infrastructure ou Presentation.
+A camada Domain **não pode depender** das camadas de Application, External ou Presentation.
 
 ---
 
@@ -30,7 +30,7 @@ A estrutura recomendada é:
 ```text
 domain/
 ├── common/
-│   ├── abstract/
+│   ├── abstracts/
 │   │   └── Entity.java
 │   ├── exception/
 │   │   └── DomainException.java
@@ -38,11 +38,10 @@ domain/
 │       └── IdValueObject.java
 └── sample/
     ├── SampleEntity.java
-    ├── exception/
-    │   └── SampleDomainException.java
     └── valueobject/
-        ├── SampleIdValueObject.java
-        └── SampleValueObject.java
+        ├── SampleValueObject.java
+        └── exception/
+            └── InvalidSampleException.java
 ```
 
 As seguintes regras devem ser respeitadas:
@@ -75,22 +74,20 @@ Ela deve fornecer, quando aplicável:
 ```java
 public class SampleEntity extends Entity {
 
-    private SampleValueObject value;
+    private SampleValueObject sample;
 
     public SampleEntity(
             String id,
-            String name,
-            String sample
+            String sample,
+            Instant createdAt
     ) {
-        super(id);
+        super(id, createdAt);
 
-        var nameResult = SampleNameValueObject.of(sample);
         var sampleResult = SampleValueObject.of(sample);
 
-        var results = List.of(nameResult, sampleResult);
+        var results = List.<Result<?>>of(sampleResult);
         validateOrThrow(results);
 
-        this.name = nameResult.getValue();
         this.sample = sampleResult.getValue();
     }
 }
@@ -142,15 +139,15 @@ As seguintes regras devem ser respeitadas:
 ## ✔ Correto
 
 ```java
-sample.activate();
+sample.markAsFinished();
 
-sample.changeValue(value);
+sample.updateValue(value);
 ```
 
 ## ❌ Incorreto
 
 ```java
-sample.setActive(true);
+sample.setFinished(true);
 
 sample.setValue(value);
 ```
@@ -221,9 +218,9 @@ public final class SampleValueObject {
         this.value = value;
     }
 
-    public static Result<SampleValueObject> create(String value) {
+    public static Result<SampleValueObject> of(String value) {
         if (value == null || value.isBlank()) {
-            return Result.failure(new SampleDomainException());
+            return Result.fail(new InvalidSampleException());
         }
 
         return Result.success(new SampleValueObject(value));
@@ -283,25 +280,25 @@ Toda exceção retornada deverá ser filha do tipo `RuntimeException`.
 ## ✔ Correto
 
 ```java
-Result<SampleValueObject> result = SampleValueObject.create(value);
+Result<SampleValueObject> result = SampleValueObject.of(value);
 
-if (result.isFailure()) {
-    throw result.error();
+if (result.isFail()) {
+    throw result.getError();
 }
 
-SampleValueObject sample = result.value();
+SampleValueObject sample = result.getValue();
 ```
 
 ## ✔ Correto
 
 ```java
-var result = SampleValueObject.create(value).getValueOrThrow;
+var sample = SampleValueObject.of(value).getValueOrThrow();
 ```
 
 ## ✔ Correto
 
 ```java
-var sample = SampleValueObject.create(value);
+var result = SampleValueObject.of(value);
 ```
 
 ## ❌ Incorreto
@@ -335,17 +332,17 @@ As seguintes regras devem ser respeitadas:
 
 - Devem representar apenas regras de negócio.
 - Devem possuir nomes descritivos.
-- Devem uma mensagem customizada interna.
+- Devem possuir uma mensagem customizada interna.
 - Não devem representar detalhes técnicos.
 - Não devem depender de infraestrutura.
 
 ## ✔ Correto
 
 ```java
-public class SampleDomainException extends DomainException {
+public class InvalidSampleException extends DomainException {
 
-    public SampleDomainException() {
-        super("Invalid simple");
+    public InvalidSampleException() {
+        super("Sample must not be blank");
     }
 }
 ```

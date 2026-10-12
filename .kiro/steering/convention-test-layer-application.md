@@ -58,7 +58,7 @@ Não devem utilizar:
 - Spring Boot Test;
 - Banco de dados;
 - Testcontainers;
-- Componentes reais da Infrastructure.
+- Componentes reais da External.
 
 ---
 
@@ -156,7 +156,7 @@ class CreateSampleUseCaseTest { }
 @Test
 @DisplayName("Should create sample")
 void shouldCreateSample() {
-    var repository = new SampleRepositoryImpl(...);
+    var repository = new SampleRepositoryAdapter(...);
 }
 ```
 

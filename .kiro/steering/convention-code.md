@@ -303,7 +303,7 @@ public class CreateSampleUseCase {
 ```java
 @Service
 public class CreateSampleUseCase {
-    private final SampleRepository repository = new SampleserRepository();
+    private final SampleRepository repository = new SampleRepositoryAdapter();
 }
 ```
 

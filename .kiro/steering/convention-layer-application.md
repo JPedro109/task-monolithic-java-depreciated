@@ -187,6 +187,18 @@ Caso um componente seja reutilizado por múltiplos casos de uso, ele deve possui
 
 ```java
 @Service
+public class CreateSampleUseCase {
+
+    public CreateSampleOutput execute(CreateSampleInput input) {
+        ...
+    }
+}
+```
+
+## ❌ Incorreto
+
+```java
+@Service
 public class CreateSampleUseCaseImpl implements CreateSampleUseCase {
     ...
 }
@@ -273,7 +285,7 @@ var entity = new SampleEntity(input.id(), input.name(), input.value());
 ```
 
 ```java
-return new CreateSampleOutput(entity.getId().value(), entity.getName().value());
+return new CreateSampleOutput(entity.getId().asString(), entity.getName().asString());
 ```
 
 ## ❌ Incorreto
@@ -371,7 +383,7 @@ Não é permitido depender de:
 - Models de persistência;
 - Repositórios concretos;
 - Frameworks de persistência, com a **única exceção** da anotação `@Transactional` do Spring para o gerenciamento transacional dos casos de uso (ver seção "Gerenciamento Transacional");
-- Componentes da camada Infrastructure.
+- Componentes da camada External.
 
 ---
 
@@ -387,6 +399,6 @@ Toda implementação da camada Application deve respeitar os seguintes princípi
 - Toda comunicação externa deve ocorrer através de portas.
 - A camada Application coordena o fluxo da aplicação, executa validações que dependam de recursos externos e orquestra a execução das regras de negócio da camada Domain.
 - Entidades pertencem ao Domain.
-- Componentes da Infrastructure nunca devem ser acessados diretamente.
+- Componentes da External nunca devem ser acessados diretamente.
 - O retorno dos casos de uso deve ocorrer através de DTOs de saída.
 - Casos de uso com 2 ou mais invocações de portas de persistência devem ser transacionais: `@Transactional(readOnly = true)` quando forem todas de leitura e `@Transactional` quando houver ao menos uma escrita. A anotação `@Transactional` do Spring é a única dependência de framework de persistência permitida nesta camada.

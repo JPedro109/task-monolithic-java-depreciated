@@ -36,7 +36,7 @@ src/test/java/
         ├── mapper/
         │   └── SampleMapperTest.java
         └── repository/
-            └── SampleRepositoryImplTest.java
+            └── SampleRepositoryAdapterTest.java
 ```
 
 ---
@@ -140,8 +140,8 @@ class SampleMapperTest {
 
         var model = SampleMapper.toModel(entity);
 
-        assertThat(model.getId()).isEqualTo(entity.getId().value());
-        assertThat(model.getName()).isEqualTo(entity.getName().value());
+        assertThat(model.getId().toString()).isEqualTo(entity.getId().asString());
+        assertThat(model.getValue()).isEqualTo(entity.getValue().asString());
     }
 }
 ```

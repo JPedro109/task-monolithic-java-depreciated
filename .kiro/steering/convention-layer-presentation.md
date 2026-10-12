@@ -9,7 +9,7 @@ A camada **Presentation** é responsável exclusivamente pela comunicação entr
 
 Ela recebe as requisições, converte os dados para os DTOs da camada Application, executa os casos de uso e transforma o resultado em uma resposta apropriada.
 
-A camada Presentation **não implementa regras de negócio** e **não acessa diretamente componentes da camada Infrastructure**.
+A camada Presentation **não implementa regras de negócio** e **não acessa diretamente componentes da camada External**.
 
 ---
 
@@ -87,7 +87,7 @@ public class SampleController {
 
         LOGGER.info("Create sample request: {}", request);
 
-        var dto = new CreateSampleInput(request.name(), request.value())
+        var dto = new CreateSampleInput(request.name(), request.value());
         var output = createSampleUseCase.execute(dto);
 
         var response = CreateSampleResponse.of(output);
@@ -472,7 +472,7 @@ Não é permitido depender diretamente de:
 - Adaptadores;
 - DAOs;
 - Modelos de persistência;
-- Componentes da Infrastructure.
+- Componentes da External.
 
 Toda comunicação deve ocorrer exclusivamente através dos casos de uso.
 

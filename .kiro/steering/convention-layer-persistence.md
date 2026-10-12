@@ -20,7 +20,7 @@ O uso do **Java Persistence API (JPA)** é obrigatório para implementação da 
 A organização recomendada é:
 
 ```text
-infrastructure/
+external/
 └── persistence/
     ├── dao/
     ├── mapper/
@@ -49,7 +49,7 @@ As seguintes regras devem ser respeitadas:
 ## ✔ Correto
 
 ```java
-public interface SampleJpaDaoextends JpaRepository<SampleJpaModel, UUID> {
+public interface SampleJpaDao extends JpaRepository<SampleJpaModel, UUID> {
 
     Optional<SampleJpaModel> findByName(String name);
 }
@@ -81,11 +81,11 @@ As seguintes regras devem ser respeitadas:
 
 ```java
 @Repository
-public class SampleRepositoryImpl implements SampleRepository {
+public class SampleRepositoryAdapter implements SampleRepository {
 
     private final SampleJpaDao dao;
 
-    public SampleRepositoryImpl(SampleJpaDao dao) {
+    public SampleRepositoryAdapter(SampleJpaDao dao) {
         this.dao = dao;
     }
 
@@ -95,7 +95,7 @@ public class SampleRepositoryImpl implements SampleRepository {
 
         var saved = dao.save(model);
 
-        return SampleMapper.toEntity(saved);
+        return SampleMapper.toDomain(saved);
     }
 }
 ```
@@ -104,7 +104,7 @@ public class SampleRepositoryImpl implements SampleRepository {
 
 ```java
 @Repository
-public class SampleRepositoryImpl implements SampleRepository {
+public class SampleRepositoryAdapter implements SampleRepository {
 
     @Override
     public SampleJpaModel save(
@@ -138,14 +138,14 @@ public final class SampleMapper {
 
     public static SampleJpaModel toModel(SampleEntity entity) {
         return new SampleJpaModel(
-                entity.getId().value(),
-                entity.getName().value()
+                UUID.fromString(entity.getId().asString()),
+                entity.getName().asString()
         );
     }
 
-    public static SampleEntity toEntity(SampleJpaModel model) {
+    public static SampleEntity toDomain(SampleJpaModel model) {
         return new SampleEntity(
-                model.getId(),
+                model.getId().toString(),
                 model.getName()
         );
     }
@@ -157,7 +157,7 @@ public final class SampleMapper {
 ```java
 public class SampleMapper {
 
-    public SampleEntity toEntity(SampleJpaModel model) {
+    public SampleEntity toDomain(SampleJpaModel model) {
         repository.save(...);
     }
 }
@@ -187,7 +187,7 @@ As seguintes regras devem ser respeitadas:
 public class SampleJpaModel {
 
     @Id
-    private String id;
+    private UUID id;
     @Column(nullable = false)
     private String name;
 }
@@ -237,7 +237,7 @@ As seguintes regras devem ser respeitadas:
 ## ✔ Correto
 
 ```java
-public interface SampleJpaDaoextends JpaRepository<SampleJpaModel,String> {
+public interface SampleJpaDao extends JpaRepository<SampleJpaModel, UUID> {
 
     Optional<SampleJpaModel> findByName(
             String name
@@ -250,7 +250,7 @@ public interface SampleJpaDaoextends JpaRepository<SampleJpaModel,String> {
 ```
 
 ```java
-public interface SampleJpaDaoextends JpaRepository<SampleJpaModel, String> {
+public interface SampleJpaDao extends JpaRepository<SampleJpaModel, UUID> {
 
     @Query("""
         select s
@@ -271,8 +271,8 @@ public Optional<SampleEntity> findByName(
         SampleNameValueObject name
 ) {
 
-    return dao.findByName(name.value())
-            .map(SampleMapper::toEntity);
+    return dao.findByName(name.asString())
+            .map(SampleMapper::toDomain);
 }
 ```
 
@@ -329,7 +329,7 @@ A camada de persistência deve abstrair completamente a tecnologia utilizada pel
 
 As seguintes regras devem ser respeitadas:
 
-- Nenhuma camada fora da Infrastructure deve conhecer detalhes do banco.
+- Nenhuma camada fora da External deve conhecer detalhes do banco.
 - Consultas devem permanecer encapsuladas nos DAOs.
 - Toda comunicação deve ocorrer através dos Repositories.
 - O banco de dados nunca deve ser acessado diretamente por casos de uso.
@@ -365,8 +365,8 @@ As seguintes regras devem ser respeitadas:
 public static SampleJpaModel toModel(SampleEntity entity) {
 
     return new SampleJpaModel(
-            entity.getId().value(),
-            entity.getName().value()
+            UUID.fromString(entity.getId().asString()),
+            entity.getName().asString()
     );
 }
 ```
@@ -378,7 +378,7 @@ public static SampleJpaModel toModel(SampleEntity entity) {
 public class SampleJpaModel {
 
     @Embedded
-    private SampleIdValueObject id;
+    private IdValueObject id;
 }
 ```
 
@@ -410,5 +410,5 @@ Toda implementação da camada de Persistência deve respeitar os seguintes prin
 - Models representam apenas a estrutura persistida.
 - Mappers realizam exclusivamente conversões entre Domain e Model.
 - Nenhuma regra de negócio deve ser implementada nesta camada.
-- Models nunca devem ser expostos para fora da Infrastructure.
+- Models nunca devem ser expostos para fora da External.
 - Toda persistência deve passar pelo fluxo **Repository → Mapper → DAO → JPA → Banco de Dados**.

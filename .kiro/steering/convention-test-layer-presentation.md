@@ -65,7 +65,7 @@ Não devem utilizar:
 
 - Banco de dados;
 - Repositories;
-- Adaptadores da Infrastructure;
+- Adaptadores da External;
 - Casos de uso reais.
 
 ---
@@ -100,48 +100,46 @@ class SampleControllerTest {
     @MockitoBean
     private CreateSampleUseCase createSampleUseCase;
 
-        @Nested
-        @DisplayName("POST /api/v1/samples")
-        class CreateSample {
+    @Nested
+    @DisplayName("POST /api/v1/samples")
+    class CreateSample {
 
-            @Test
-            @DisplayName("Should return 201 when request is valid")
-            void shouldReturn201WhenRequestIsValid() throws Exception {
-                var sample = SampleFixture.aSample();
-                var sampleName = sampleName.getValue();
-                var sampleValue = sampleValue.getValue();
+        @Test
+        @DisplayName("Should return 201 when request is valid")
+        void shouldReturn201WhenRequestIsValid() throws Exception {
+            var sample = SampleFixture.aSample();
+            var sampleName = sample.getName().asString();
+            var output = SampleOutputFixture.aSampleOutput();
 
-                when(createSampleUseCase.execute(any()))
-                        .thenReturn(output);
+            when(createSampleUseCase.execute(any()))
+                    .thenReturn(output);
 
-                var result = perform(sampleName, sampleValue);
+            var result = perform(sampleName);
 
-                result.andExpect(status().isBadRequest());
-                verify(createSampleUseCase, never()).execute(any());
-            }
+            result.andExpect(status().isCreated());
+            verify(createSampleUseCase).execute(any());
+        }
 
-            @Test
-            @DisplayName("Should return 400 when request is invalid")
-            void shouldReturn400WhenRequestIsInvalid() throws Exception {
-                var sample = SampleFixture.aSample();
-                var invalidSampleName = "";
-                var sampleValue = sampleValue.getValue();
+        @Test
+        @DisplayName("Should return 400 when name is blank")
+        void shouldReturn400WhenNameIsBlank() throws Exception {
+            var invalidSampleName = "";
 
-                var result = perform(sampleName, sampleValue);
-                        
-                result.andExpect(status().isBadRequest());
-                verify(createSampleUseCase, never()).execute(any());
-            }
+            var result = perform(invalidSampleName);
 
-            private ResultActions perform(String name, String value) throws Exception {
-                var requestBody = """
-                        {"name": "%s", "value": "%s"}
-                        """.formatted(name, value);
+            result.andExpect(status().isBadRequest());
+            verify(createSampleUseCase, never()).execute(any());
+        }
 
-                return mockMvc.perform(post("/api/v1/samples")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(requestBody));
-            }
+        private ResultActions perform(String name) throws Exception {
+            var requestBody = """
+                    {"name": "%s"}
+                    """.formatted(name);
+
+            return mockMvc.perform(post("/api/v1/samples")
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(requestBody));
+        }
     }
 }
 ```
@@ -152,14 +150,12 @@ class SampleControllerTest {
 
 ```java
 @Test
-@DisplayName("Should return 400 when request is invalid")
-void shouldReturn400WhenRequestIsInvalid() throws Exception {
-    var sample = SampleFixture.aSample();
+@DisplayName("Should return 400 when name is blank")
+void shouldReturn400WhenNameIsBlank() throws Exception {
     var invalidSampleName = "";
-    var sampleValue = sampleValue.asString();
 
-    var result = perform(sampleName, sampleValue);
-            
+    var result = perform(invalidSampleName);
+
     result.andExpect(status().isBadRequest());
     verify(createSampleUseCase, never()).execute(any());
 }
@@ -469,13 +465,11 @@ class SampleIntegrationTest extends IntegrationTestBase {
         @SqlCreateSeed
         @WithJwtTokenMock
         void shouldReturn201WhenRequestIsValid() throws Exception {
-            var sample = SampleFixture.aSample();
-            var sampleName = sampleName.getValue();
-            var sampleValue = sampleValue.getValue();
+            var request = CreateSampleRequestFixture.aRequest();
 
-            var result = perform(sampleName, sampleValue);
+            var result = perform(request);
 
-            result.andExpect(status().isBadRequest());
+            result.andExpect(status().isCreated());
         }
 
         @Test
@@ -483,26 +477,20 @@ class SampleIntegrationTest extends IntegrationTestBase {
         @SqlCreateSeed
         @WithJwtTokenMock
         void shouldReturn400WhenNameIsBlank() throws Exception {
-            var sample = SampleFixture.aSample();
             var invalidSampleName = "";
-            var sampleValue = sampleValue.getValue();
+            var request = new CreateSampleRequest(invalidSampleName);
 
-            var result = perform(sampleName, sampleValue);
-                    
+            var result = perform(request);
+
             result.andExpect(status().isBadRequest());
         }
 
         @Test
         @DisplayName("Should return 401 when no token is provided")
         void shouldReturn401WhenNoTokenIsProvided() throws Exception {
-            var sample = SampleFixture.aSample();
-            var invalidSampleName = "";
-            var sampleValue = sampleValue.getValue();
+            var request = CreateSampleRequestFixture.aRequest();
 
-            var result = perform(sampleName, sampleValue);
-
-            perform(request)
-                    .andExpect(status().isUnauthorized());
+            var result = perform(request);
 
             result.andExpect(status().isUnauthorized());
         }
