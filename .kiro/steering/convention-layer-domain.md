@@ -74,20 +74,24 @@ Ela deve fornecer, quando aplicável:
 ```java
 public class SampleEntity extends Entity {
 
+    private SampleNameValueObject sampleName;
     private SampleValueObject sample;
 
     public SampleEntity(
             String id,
+            String sampleName,
             String sample,
             Instant createdAt
     ) {
         super(id, createdAt);
 
+        var sampleNameResult = SampleNameValueObject.of(sampleName);
         var sampleResult = SampleValueObject.of(sample);
 
-        var results = List.<Result<?>>of(sampleResult);
+        var results = List.of(sampleNameResult, sampleResult);
         validateOrThrow(results);
 
+        this.sampleName = sampleNameResult.getValue();
         this.sample = sampleResult.getValue();
     }
 }

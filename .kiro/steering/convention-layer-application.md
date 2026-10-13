@@ -67,7 +67,7 @@ As seguintes regras devem ser respeitadas:
 @Service
 public class CreateSampleUseCase {
 
-    public CreateSampleOutput execute(CreateSampleInput input) {
+    public CreateSampleOutputDto execute(CreateSampleInputDto input) {
         ...
     }
 }
@@ -77,7 +77,7 @@ public class CreateSampleUseCase {
 
 ```java
 public interface CreateSampleUseCase {
-    CreateSampleOutput execute(CreateSampleInput input);
+    CreateSampleOutputDto execute(CreateSampleInputDto input);
 }
 
 @Service
@@ -116,14 +116,14 @@ As seguintes regras devem ser respeitadas:
 ## ✔ Correto
 
 ```java
-public record CreateSampleInput(
+public record CreateSampleInputDto(
         String name,
         String value
 ) { }
 ```
 
 ```java
-public record CreateSampleOutput(
+public record CreateSampleOutputDto(
         String id,
         String name
 ) { }
@@ -132,7 +132,7 @@ public record CreateSampleOutput(
 ## ❌ Incorreto
 
 ```java
-public class CreateSampleInput {
+public class CreateSampleInputDto {
     @NotBlank
     private String name;
 }
@@ -189,7 +189,7 @@ Caso um componente seja reutilizado por múltiplos casos de uso, ele deve possui
 @Service
 public class CreateSampleUseCase {
 
-    public CreateSampleOutput execute(CreateSampleInput input) {
+    public CreateSampleOutputDto execute(CreateSampleInputDto input) {
         ...
     }
 }
@@ -248,8 +248,8 @@ As seguintes regras devem ser respeitadas:
 ## ✔ Correto
 
 ```java
-public CreateSampleOutput execute(
-        CreateSampleInput input
+public CreateSampleOutputDto execute(
+        CreateSampleInputDto input
 ) {
     var entity = new SampleEntity(
             UUID.randomUUID().toString(),
@@ -259,7 +259,7 @@ public CreateSampleOutput execute(
 
     repository.save(entity);
 
-    return new CreateSampleOutput(
+    return new CreateSampleOutputDto(
             entity.getId().asString(),
             entity.getName().asString()
     );
@@ -285,7 +285,7 @@ var entity = new SampleEntity(input.id(), input.name(), input.value());
 ```
 
 ```java
-return new CreateSampleOutput(entity.getId().asString(), entity.getName().asString());
+return new CreateSampleOutputDto(entity.getId().asString(), entity.getName().asString());
 ```
 
 ## ❌ Incorreto
@@ -329,7 +329,7 @@ Com uma única chamada não há nada a coordenar. A partir de duas, surge o risc
 public class UpdateSampleUseCase {
 
     @Transactional
-    public SampleOutput execute(UpdateSampleInput input) {
+    public SampleOutputDto execute(UpdateSampleInputDto input) {
         var sample = repository.findById(IdValueObject.of(input.id()).getValueOrThrow())
                 .orElseThrow(SampleNotFoundException::new);
 
@@ -337,7 +337,7 @@ public class UpdateSampleUseCase {
 
         var saved = repository.save(sample);
 
-        return new SampleOutput(saved.getId().asString(), saved.getName().asString());
+        return new SampleOutputDto(saved.getId().asString(), saved.getName().asString());
     }
 }
 ```
@@ -347,7 +347,7 @@ public class UpdateSampleUseCase {
 public class ListSamplesUseCase {
 
     @Transactional(readOnly = true)
-    public List<SampleOutput> execute(ListSamplesInput input) {
+    public List<SampleOutputDto> execute(ListSamplesInputDto input) {
         ...
     }
 }
@@ -361,7 +361,7 @@ public class CreateSampleUseCase {
 
     // Duas escritas sem transação abrangente: se a segunda falhar,
     // a primeira já foi confirmada e o estado fica parcial.
-    public SampleOutput execute(CreateSampleInput input) {
+    public SampleOutputDto execute(CreateSampleInputDto input) {
         repository.save(firstEntity);
         auditRepository.save(secondEntity);
         ...

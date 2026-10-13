@@ -28,11 +28,24 @@ A organização física do projeto deve refletir a arquitetura definida aqui. Ca
 A estrutura do projeto é:
 
 ```text
-src/
+core/
 ├── domain/
 ├── application/
-├── External/
+├── external/
 └── presentation/
+```
+
+As quatro camadas de negócio residem sob `core/`. Além delas, o projeto possui um pacote transversal `configuration/`, que concentra a configuração técnica da aplicação (segurança, filtros, documentação, tracing) e não pertence a nenhuma das camadas de negócio:
+
+```text
+configuration/
+├── filter/      # filtros de requisição (ex.: autenticação JWT, contexto de tracing)
+├── security/    # configuração do Spring Security e propriedades tipadas
+├── swagger/     # configuração do SpringDoc/OpenAPI
+└── tracing/     # configuração de observabilidade/baggage
+```
+
+O pacote `configuration/` é a fronteira técnica de bootstrap do framework. Componentes transversais que precisam ser registrados no contexto do Spring e que não implementam regra de negócio (filtros, beans de configuração) residem aqui, e não dentro das camadas de `core/`.
 
 ---
 

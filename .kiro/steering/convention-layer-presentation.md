@@ -31,7 +31,6 @@ presentation/
 │   │   └── common/
 │   ├── common/
 │   │   ├── handler/
-│   │   ├── filter/
 │   │   └── resolver/
 │   └── SampleController.java
 ```

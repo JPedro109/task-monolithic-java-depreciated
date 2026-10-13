@@ -94,9 +94,6 @@ class SampleControllerTest {
     @Autowired
     private MockMvc mockMvc;
 
-    @Autowired
-    private ObjectMapper objectMapper;
-
     @MockitoBean
     private CreateSampleUseCase createSampleUseCase;
 
@@ -109,7 +106,7 @@ class SampleControllerTest {
         void shouldReturn201WhenRequestIsValid() throws Exception {
             var sample = SampleFixture.aSample();
             var sampleName = sample.getName().asString();
-            var output = SampleOutputFixture.aSampleOutput();
+            var output = buildSampleOutput(sample);
 
             when(createSampleUseCase.execute(any()))
                     .thenReturn(output);
@@ -140,6 +137,13 @@ class SampleControllerTest {
                     .contentType(MediaType.APPLICATION_JSON)
                     .content(requestBody));
         }
+    }
+
+    private SampleOutputDTO buildSampleOutput(SampleEntity sample) {
+        return new SampleOutputDTO(
+                sample.getId().asString(),
+                sample.getName().asString()
+        );
     }
 }
 ```
@@ -296,12 +300,9 @@ Todos os testes devem herdar da classe base da aplicação.
 @ActiveProfiles("integration-test")
 @Import(PostgresContainerConfig.class)
 public abstract class IntegrationTestBase {
+
     @Autowired
     protected MockMvc mockMvc;
-
-    @Autowired
-    protected ObjectMapper objectMapper;
-
 }
 ```
 
@@ -424,13 +425,15 @@ Esse método deve conter exclusivamente a construção da requisição HTTP.
 ### ✔ Correto
 
 ```java
-private ResultActions perform(
-        CreateSampleRequest request
-) throws Exception {
+private ResultActions perform(String name) throws Exception {
+    var requestBody = """
+            {"name": "%s"}
+            """.formatted(name);
+
     return mockMvc.perform(
             post("/api/v1/samples")
                     .contentType(MediaType.APPLICATION_JSON)
-                    .content(objectMapper.writeValueAsString(request))
+                    .content(requestBody)
     );
 }
 ```
@@ -465,9 +468,9 @@ class SampleIntegrationTest extends IntegrationTestBase {
         @SqlCreateSeed
         @WithJwtTokenMock
         void shouldReturn201WhenRequestIsValid() throws Exception {
-            var request = CreateSampleRequestFixture.aRequest();
+            var sampleName = "Sample Name";
 
-            var result = perform(request);
+            var result = perform(sampleName);
 
             result.andExpect(status().isCreated());
         }
@@ -478,9 +481,8 @@ class SampleIntegrationTest extends IntegrationTestBase {
         @WithJwtTokenMock
         void shouldReturn400WhenNameIsBlank() throws Exception {
             var invalidSampleName = "";
-            var request = new CreateSampleRequest(invalidSampleName);
 
-            var result = perform(request);
+            var result = perform(invalidSampleName);
 
             result.andExpect(status().isBadRequest());
         }
@@ -488,20 +490,22 @@ class SampleIntegrationTest extends IntegrationTestBase {
         @Test
         @DisplayName("Should return 401 when no token is provided")
         void shouldReturn401WhenNoTokenIsProvided() throws Exception {
-            var request = CreateSampleRequestFixture.aRequest();
+            var sampleName = "Sample Name";
 
-            var result = perform(request);
+            var result = perform(sampleName);
 
             result.andExpect(status().isUnauthorized());
         }
 
-        private ResultActions perform(
-                CreateSampleRequest request
-        ) throws Exception {
+        private ResultActions perform(String name) throws Exception {
+            var requestBody = """
+                    {"name": "%s"}
+                    """.formatted(name);
+
             return mockMvc.perform(
                     post("/api/v1/samples")
                             .contentType(MediaType.APPLICATION_JSON)
-                            .content(objectMapper.writeValueAsString(request))
+                            .content(requestBody)
             );
         }
     }
@@ -533,13 +537,11 @@ private SampleRepository repository;
 ```java
 @Test
 void shouldReturn400WhenNameIsBlank() throws Exception {
-    var request = CreateSampleRequestFixture.aRequest();
-
-    perform(request);
+    perform("Sample Name");
 }
 ```
 
-Neste caso, a Fixture foi utilizada para gerar um request **inválido** completo. O correto é extrair os campos válidos da Fixture e declarar manualmente apenas o campo inválido que representa a falha.
+Neste caso, o teste afirma validar o cenário de nome em branco (`400`), mas envia um nome válido. O correto é declarar explicitamente o valor inválido que representa a falha (ex.: `var invalidSampleName = "";`) e passá-lo ao `perform(...)`, de modo que o corpo enviado reflita exatamente o cenário sob teste.
 
 ---
 
