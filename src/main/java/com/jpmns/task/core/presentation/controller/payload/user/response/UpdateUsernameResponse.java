@@ -1,6 +1,6 @@
 package com.jpmns.task.core.presentation.controller.payload.user.response;
 
-import com.jpmns.task.core.application.usecase.user.dto.output.UpdateUsernameOutputDTO;
+import com.jpmns.task.core.application.usecase.user.dto.output.UpdateUsernameOutputDto;
 import com.jpmns.task.core.presentation.controller.documentation.payload.user.response.UpdateUsernameResponseDoc;
 
 public record UpdateUsernameResponse(
@@ -8,7 +8,7 @@ public record UpdateUsernameResponse(
         String username
 ) implements UpdateUsernameResponseDoc {
 
-    public static UpdateUsernameResponse of(UpdateUsernameOutputDTO dto) {
+    public static UpdateUsernameResponse of(UpdateUsernameOutputDto dto) {
         return new UpdateUsernameResponse(dto.id(), dto.username());
     }
 }

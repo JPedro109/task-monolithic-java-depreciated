@@ -5,10 +5,10 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 
 import com.jpmns.task.core.application.port.persistence.repository.TaskRepository;
-import com.jpmns.task.core.application.usecase.task.dto.input.ListTasksInputDTO;
-import com.jpmns.task.core.application.usecase.task.dto.output.TaskOutputDTO;
+import com.jpmns.task.core.application.usecase.task.dto.input.ListTasksInputDto;
+import com.jpmns.task.core.application.usecase.task.dto.output.TaskOutputDto;
+import com.jpmns.task.core.application.usecase.task.mapper.TaskOutputMapper;
 import com.jpmns.task.core.domain.common.valueobject.IdValueObject;
-import com.jpmns.task.core.domain.task.TaskEntity;
 
 @Service
 public class ListTasksUseCase {
@@ -19,22 +19,12 @@ public class ListTasksUseCase {
         this.taskRepository = taskRepository;
     }
 
-    public List<TaskOutputDTO> execute(ListTasksInputDTO input) {
+    public List<TaskOutputDto> execute(ListTasksInputDto input) {
         var userIdValue = IdValueObject.of(input.userId()).getValueOrThrow();
 
         return taskRepository.findAllByUserId(userIdValue)
                 .stream()
-                .map(this::toOutput)
+                .map(TaskOutputMapper::toOutput)
                 .toList();
-    }
-
-    private TaskOutputDTO toOutput(TaskEntity task) {
-        return new TaskOutputDTO(
-                task.getId().asString(),
-                task.getUserId().asString(),
-                task.getTaskName().asString(),
-                task.getFinished(),
-                task.getCreatedAt()
-        );
     }
 }

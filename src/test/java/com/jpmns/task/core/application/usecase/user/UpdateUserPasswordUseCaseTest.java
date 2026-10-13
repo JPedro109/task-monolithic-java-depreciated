@@ -18,7 +18,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.jpmns.task.core.application.port.persistence.repository.UserRepository;
 import com.jpmns.task.core.application.port.security.PasswordEncoder;
-import com.jpmns.task.core.application.usecase.user.dto.input.UpdateUserPasswordInputDTO;
+import com.jpmns.task.core.application.usecase.user.dto.input.UpdateUserPasswordInputDto;
 import com.jpmns.task.core.application.usecase.user.exception.InvalidCredentialsException;
 import com.jpmns.task.core.application.usecase.user.exception.UserNotFoundException;
 import com.jpmns.task.core.domain.common.exception.DomainException;
@@ -45,7 +45,7 @@ class UpdateUserPasswordUseCaseTest {
         var userId = user.getId();
         var currentPassword = user.getPassword().asString();
         var encodedNewPassword = "encoded_new_password";
-        var input = new UpdateUserPasswordInputDTO(userId.asString(), currentPassword, NEW_PASSWORD);
+        var input = new UpdateUserPasswordInputDto(userId.asString(), currentPassword, NEW_PASSWORD);
 
         when(userRepository.findById(userId)).thenReturn(Optional.of(user));
         when(passwordEncoder.matches(currentPassword, currentPassword)).thenReturn(true);
@@ -63,7 +63,7 @@ class UpdateUserPasswordUseCaseTest {
     void shouldThrowWhenUserIdIsInvalid() {
         var invalidUserId = "not-a-valid-uuid";
         var currentPassword = "current";
-        var input = new UpdateUserPasswordInputDTO(invalidUserId, currentPassword, NEW_PASSWORD);
+        var input = new UpdateUserPasswordInputDto(invalidUserId, currentPassword, NEW_PASSWORD);
 
         assertThatThrownBy(() -> useCase.execute(input))
                 .isInstanceOf(DomainException.class);
@@ -78,7 +78,7 @@ class UpdateUserPasswordUseCaseTest {
         var user = UserFixture.aUser();
         var userId = user.getId();
         var currentPassword = "current";
-        var input = new UpdateUserPasswordInputDTO(userId.asString(), currentPassword, NEW_PASSWORD);
+        var input = new UpdateUserPasswordInputDto(userId.asString(), currentPassword, NEW_PASSWORD);
 
         when(userRepository.findById(userId)).thenReturn(Optional.empty());
 
@@ -95,7 +95,7 @@ class UpdateUserPasswordUseCaseTest {
         var userId = user.getId();
         var currentPassword = user.getPassword().asString();
         var wrongPassword = "wrong_password";
-        var input = new UpdateUserPasswordInputDTO(userId.asString(), wrongPassword, NEW_PASSWORD);
+        var input = new UpdateUserPasswordInputDto(userId.asString(), wrongPassword, NEW_PASSWORD);
 
         when(userRepository.findById(userId)).thenReturn(Optional.of(user));
         when(passwordEncoder.matches(wrongPassword, currentPassword)).thenReturn(false);

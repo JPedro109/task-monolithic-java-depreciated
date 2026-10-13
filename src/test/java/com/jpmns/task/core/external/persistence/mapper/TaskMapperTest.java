@@ -15,8 +15,8 @@ import com.jpmns.task.shared.fixture.UserFixture;
 class TaskMapperTest {
 
     @Test
-    @DisplayName("Should map a TaskEntity to a TaskJpaModel correctly")
-    void shouldMapEntityToModel() {
+    @DisplayName("Should map a TaskEntity to a TaskJpaModel when the entity is valid")
+    void shouldMapEntityToModelWhenEntityIsValid() {
         var task = TaskFixture.aTask();
         var taskId = task.getId();
         var taskName = task.getTaskName();
@@ -33,12 +33,12 @@ class TaskMapperTest {
     }
 
     @Test
-    @DisplayName("Should map a TaskJpaModel to a TaskEntity correctly")
-    void shouldMapModelToDomain() {
+    @DisplayName("Should map a TaskJpaModel to a TaskEntity when the model is valid")
+    void shouldMapModelToDomainWhenModelIsValid() {
         var task = TaskFixture.aTask();
         var taskId = task.getId();
         var taskName = task.getTaskName();
-        var taskFinished = task.getFinished();
+        var taskFinished = task.isFinished();
         var user = UserFixture.aUser();
         var userId = user.getId();
         var model = new TaskJpaModel(
@@ -56,7 +56,7 @@ class TaskMapperTest {
         assertThat(entity.getId().asString()).isEqualTo(taskId.asString());
         assertThat(entity.getUserId().asString()).isEqualTo(userId.asString());
         assertThat(entity.getTaskName().asString()).isEqualTo(taskName.asString());
-        assertThat(entity.getFinished()).isFalse();
+        assertThat(entity.isFinished()).isFalse();
     }
 
     @Test
@@ -64,7 +64,7 @@ class TaskMapperTest {
     void shouldPreserveTaskNameWhenMappingToDomain() {
         var task = TaskFixture.aTask();
         var taskId = task.getId();
-        var taskFinished = task.getFinished();
+        var taskFinished = task.isFinished();
         var user = UserFixture.aUser();
         var userId = user.getId();
         var customName = "Custom task name";

@@ -190,7 +190,7 @@ class TaskJpaDaoTest {
     private TaskJpaModel buildTask(TaskEntity task, UUID userId) {
         var taskId = task.getId();
         var taskName = task.getTaskName();
-        var finished = task.getFinished();
+        var finished = task.isFinished();
         var createdAt = task.getCreatedAt();
 
         return new TaskJpaModel(

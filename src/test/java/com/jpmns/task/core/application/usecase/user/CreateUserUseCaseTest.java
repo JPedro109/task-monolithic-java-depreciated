@@ -16,7 +16,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.jpmns.task.core.application.port.persistence.repository.UserRepository;
 import com.jpmns.task.core.application.port.security.PasswordEncoder;
-import com.jpmns.task.core.application.usecase.user.dto.input.CreateUserInputDTO;
+import com.jpmns.task.core.application.usecase.user.dto.input.CreateUserInputDto;
 import com.jpmns.task.core.application.usecase.user.exception.UsernameAlreadyExistsException;
 import com.jpmns.task.shared.fixture.UserFixture;
 
@@ -38,7 +38,7 @@ class CreateUserUseCaseTest {
         var user = UserFixture.aUser();
         var username = user.getUsername();
         var password = user.getPassword();
-        var input = new CreateUserInputDTO(username.asString(), password.asString());
+        var input = new CreateUserInputDto(username.asString(), password.asString());
         var savedUser = UserFixture.aUser();
 
         when(userRepository.existsByUsername(username)).thenReturn(false);
@@ -58,10 +58,9 @@ class CreateUserUseCaseTest {
         var user = UserFixture.aUser();
         var username = user.getUsername();
         var password = user.getPassword();
-        var input = new CreateUserInputDTO(username.asString(), password.asString());
+        var input = new CreateUserInputDto(username.asString(), password.asString());
 
         when(userRepository.existsByUsername(username)).thenReturn(true);
-        when(passwordEncoder.encode(password.asString())).thenReturn(password.asString());
 
         assertThatThrownBy(() -> useCase.execute(input))
                 .isInstanceOf(UsernameAlreadyExistsException.class);

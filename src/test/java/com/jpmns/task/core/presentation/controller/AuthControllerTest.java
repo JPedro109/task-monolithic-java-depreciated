@@ -21,17 +21,17 @@ import org.springframework.test.web.servlet.ResultActions;
 
 import com.jpmns.task.configuration.security.SecurityConfig;
 import com.jpmns.task.core.application.port.security.Token;
-import com.jpmns.task.core.application.usecase.user.GetUserByIdUseCase;
 import com.jpmns.task.core.application.usecase.user.RefreshUserTokenUseCase;
 import com.jpmns.task.core.application.usecase.user.UserLoginUseCase;
-import com.jpmns.task.core.application.usecase.user.dto.output.RefreshUserTokenOutputDTO;
-import com.jpmns.task.core.application.usecase.user.dto.output.UserLoginOutputDTO;
+import com.jpmns.task.core.application.usecase.user.dto.output.RefreshUserTokenOutputDto;
+import com.jpmns.task.core.application.usecase.user.dto.output.UserLoginOutputDto;
 import com.jpmns.task.core.application.usecase.user.exception.InvalidCredentialsException;
 import com.jpmns.task.core.presentation.controller.common.handler.GlobalExceptionHandler;
+import com.jpmns.task.core.presentation.controller.common.resolver.AuthenticatedUserResolver;
 import com.jpmns.task.shared.fixture.UserFixture;
 
 @WebMvcTest(AuthController.class)
-@Import({SecurityConfig.class, GlobalExceptionHandler.class})
+@Import({SecurityConfig.class, GlobalExceptionHandler.class, AuthenticatedUserResolver.class})
 class AuthControllerTest {
 
     @Autowired
@@ -46,9 +46,6 @@ class AuthControllerTest {
     @MockitoBean
     private Token token;
 
-    @MockitoBean
-    private GetUserByIdUseCase getUserByIdUseCase;
-
     @Nested
     @DisplayName("POST /api/v1/auth/login")
     class Login {
@@ -61,7 +58,7 @@ class AuthControllerTest {
             var password = user.getPassword();
             var accessToken = "access-token";
             var refreshToken = "refresh-token";
-            var output = new UserLoginOutputDTO(accessToken, refreshToken);
+            var output = new UserLoginOutputDto(accessToken, refreshToken);
 
             when(userLoginUseCase.execute(any())).thenReturn(output);
 
@@ -130,7 +127,7 @@ class AuthControllerTest {
         void shouldReturn200WhenRefreshTokenIsValid() throws Exception {
             var accessToken = "access-token";
             var refreshToken = "refresh-token";
-            var output = new RefreshUserTokenOutputDTO(accessToken, refreshToken);
+            var output = new RefreshUserTokenOutputDto(accessToken, refreshToken);
 
             when(refreshUserTokenUseCase.execute(any())).thenReturn(output);
 

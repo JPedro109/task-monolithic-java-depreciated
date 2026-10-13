@@ -12,8 +12,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.jpmns.task.core.application.usecase.user.RefreshUserTokenUseCase;
 import com.jpmns.task.core.application.usecase.user.UserLoginUseCase;
-import com.jpmns.task.core.application.usecase.user.dto.input.RefreshUserTokenInputDTO;
-import com.jpmns.task.core.application.usecase.user.dto.input.UserLoginInputDTO;
+import com.jpmns.task.core.application.usecase.user.dto.input.RefreshUserTokenInputDto;
+import com.jpmns.task.core.application.usecase.user.dto.input.UserLoginInputDto;
 import com.jpmns.task.core.presentation.controller.documentation.AuthControllerDoc;
 import com.jpmns.task.core.presentation.controller.payload.user.request.RefreshTokenRequest;
 import com.jpmns.task.core.presentation.controller.payload.user.request.UserLoginRequest;
@@ -39,7 +39,7 @@ public class AuthController implements AuthControllerDoc {
     public ResponseEntity<UserLoginResponse> login(@Valid @RequestBody UserLoginRequest request) {
         LOGGER.info("User login - request: {}", request);
 
-        var dto = new UserLoginInputDTO(request.username(), request.password());
+        var dto = new UserLoginInputDto(request.username(), request.password());
         var output = userLoginUseCase.execute(dto);
 
         var response = UserLoginResponse.of(output);
@@ -52,7 +52,7 @@ public class AuthController implements AuthControllerDoc {
     public ResponseEntity<RefreshTokenResponse> refresh(@Valid @RequestBody RefreshTokenRequest request) {
         LOGGER.info("Refreshing user token - request: {}", request);
 
-        var dto = new RefreshUserTokenInputDTO(request.refreshToken());
+        var dto = new RefreshUserTokenInputDto(request.refreshToken());
         var output = refreshUserTokenUseCase.execute(dto);
 
         var response = RefreshTokenResponse.of(output);

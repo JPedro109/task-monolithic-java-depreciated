@@ -17,8 +17,6 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import com.jpmns.task.core.application.port.security.Token;
 import com.jpmns.task.core.application.port.security.dto.DecodeTokenDto;
-import com.jpmns.task.core.application.usecase.user.GetUserByIdUseCase;
-import com.jpmns.task.core.application.usecase.user.dto.input.GetUserByIdInputDTO;
 
 @Component
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
@@ -27,11 +25,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private static final String BEARER_PREFIX = "Bearer ";
 
     private final Token token;
-    private final GetUserByIdUseCase getUserByIdUseCase;
 
-    public JwtAuthenticationFilter(Token tokenProvider, GetUserByIdUseCase getUserByIdUseCase) {
+    public JwtAuthenticationFilter(Token tokenProvider) {
         this.token = tokenProvider;
-        this.getUserByIdUseCase = getUserByIdUseCase;
     }
 
     @Override
@@ -53,16 +49,14 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             decodeTokenDto = this.token.tokenValidation(token);
         } catch (Exception ex) {
             filterChain.doFilter(request, response);
+
             return;
         }
 
         var sub = decodeTokenDto.sub();
 
         if (sub != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-            var input = new GetUserByIdInputDTO(sub);
-            var user = getUserByIdUseCase.execute(input);
-
-            var authentication = new UsernamePasswordAuthenticationToken(user.id(),
+            var authentication = new UsernamePasswordAuthenticationToken(sub,
                     null,
                     Collections.emptyList());
 

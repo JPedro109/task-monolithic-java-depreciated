@@ -37,7 +37,7 @@ class TaskRepositoryAdapterTest {
         var task = TaskFixture.aTask();
         var taskId = task.getId();
         var taskName = task.getTaskName();
-        var taskFinished = task.getFinished();
+        var taskFinished = task.isFinished();
         var user = UserFixture.aUser();
         var userId = user.getId();
 

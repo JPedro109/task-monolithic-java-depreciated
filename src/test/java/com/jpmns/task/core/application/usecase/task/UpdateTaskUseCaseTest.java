@@ -17,7 +17,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.jpmns.task.core.application.port.persistence.repository.TaskRepository;
-import com.jpmns.task.core.application.usecase.task.dto.input.UpdateTaskInputDTO;
+import com.jpmns.task.core.application.usecase.task.dto.input.UpdateTaskInputDto;
 import com.jpmns.task.core.application.usecase.task.exception.TaskAccessDeniedException;
 import com.jpmns.task.core.application.usecase.task.exception.TaskNotFoundException;
 import com.jpmns.task.shared.fixture.TaskFixture;
@@ -40,7 +40,7 @@ class UpdateTaskUseCaseTest {
         var userId = task.getUserId();
         var taskName = "Updated task name";
         var updatedTask = TaskFixture.aTaskWithName(taskName);
-        var input = new UpdateTaskInputDTO(taskId.asString(), userId.asString(), taskName);
+        var input = new UpdateTaskInputDto(taskId.asString(), userId.asString(), taskName);
 
         when(taskRepository.findById(taskId)).thenReturn(Optional.of(task));
         when(taskRepository.save(task)).thenReturn(updatedTask);
@@ -61,7 +61,7 @@ class UpdateTaskUseCaseTest {
         var taskId = task.getId();
         var userId = task.getUserId();
         var taskName = "Updated task name";
-        var input = new UpdateTaskInputDTO(taskId.asString(), userId.asString(), taskName);
+        var input = new UpdateTaskInputDto(taskId.asString(), userId.asString(), taskName);
 
         when(taskRepository.findById(taskId)).thenReturn(Optional.empty());
 
@@ -79,7 +79,7 @@ class UpdateTaskUseCaseTest {
         var task = TaskFixture.aTask();
         var taskId = task.getId();
         var taskName = "Updated task name";
-        var input = new UpdateTaskInputDTO(taskId.asString(), userId.asString(), taskName);
+        var input = new UpdateTaskInputDto(taskId.asString(), userId.asString(), taskName);
 
         when(taskRepository.findById(taskId)).thenReturn(Optional.of(task));
 

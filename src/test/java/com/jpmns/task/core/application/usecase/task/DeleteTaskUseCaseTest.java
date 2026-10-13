@@ -16,7 +16,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.jpmns.task.core.application.port.persistence.repository.TaskRepository;
-import com.jpmns.task.core.application.usecase.task.dto.input.DeleteTaskInputDTO;
+import com.jpmns.task.core.application.usecase.task.dto.input.DeleteTaskInputDto;
 import com.jpmns.task.core.application.usecase.task.exception.TaskAccessDeniedException;
 import com.jpmns.task.core.application.usecase.task.exception.TaskNotFoundException;
 import com.jpmns.task.shared.fixture.TaskFixture;
@@ -37,7 +37,7 @@ class DeleteTaskUseCaseTest {
         var task = TaskFixture.aTask();
         var taskId = task.getId();
         var userId = task.getUserId();
-        var input = new DeleteTaskInputDTO(taskId.asString(), userId.asString());
+        var input = new DeleteTaskInputDto(taskId.asString(), userId.asString());
 
         when(taskRepository.findById(taskId)).thenReturn(Optional.of(task));
 
@@ -52,7 +52,7 @@ class DeleteTaskUseCaseTest {
         var task = TaskFixture.aTask();
         var taskId = task.getId();
         var userId = task.getUserId();
-        var input = new DeleteTaskInputDTO(taskId.asString(), userId.asString());
+        var input = new DeleteTaskInputDto(taskId.asString(), userId.asString());
 
         when(taskRepository.findById(task.getId())).thenReturn(Optional.empty());
 
@@ -69,7 +69,7 @@ class DeleteTaskUseCaseTest {
         var taskId = task.getId();
         var user = UserFixture.aUser();
         var userId = user.getId();
-        var input = new DeleteTaskInputDTO(taskId.asString(), userId.asString());
+        var input = new DeleteTaskInputDto(taskId.asString(), userId.asString());
 
         when(taskRepository.findById(task.getId())).thenReturn(Optional.of(task));
 

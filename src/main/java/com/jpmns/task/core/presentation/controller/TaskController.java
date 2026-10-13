@@ -23,11 +23,11 @@ import com.jpmns.task.core.application.usecase.task.DeleteTaskUseCase;
 import com.jpmns.task.core.application.usecase.task.ListTasksUseCase;
 import com.jpmns.task.core.application.usecase.task.MarkTaskAsFinishedUseCase;
 import com.jpmns.task.core.application.usecase.task.UpdateTaskUseCase;
-import com.jpmns.task.core.application.usecase.task.dto.input.CreateTaskInputDTO;
-import com.jpmns.task.core.application.usecase.task.dto.input.DeleteTaskInputDTO;
-import com.jpmns.task.core.application.usecase.task.dto.input.ListTasksInputDTO;
-import com.jpmns.task.core.application.usecase.task.dto.input.MarkTaskAsFinishedInputDTO;
-import com.jpmns.task.core.application.usecase.task.dto.input.UpdateTaskInputDTO;
+import com.jpmns.task.core.application.usecase.task.dto.input.CreateTaskInputDto;
+import com.jpmns.task.core.application.usecase.task.dto.input.DeleteTaskInputDto;
+import com.jpmns.task.core.application.usecase.task.dto.input.ListTasksInputDto;
+import com.jpmns.task.core.application.usecase.task.dto.input.MarkTaskAsFinishedInputDto;
+import com.jpmns.task.core.application.usecase.task.dto.input.UpdateTaskInputDto;
 import com.jpmns.task.core.presentation.controller.common.resolver.AuthenticatedUserResolver;
 import com.jpmns.task.core.presentation.controller.documentation.TaskControllerDoc;
 import com.jpmns.task.core.presentation.controller.payload.task.request.CreateTaskRequest;
@@ -64,7 +64,7 @@ public class TaskController implements TaskControllerDoc {
 
         var userId = AuthenticatedUserResolver.getUserId();
 
-        var dto = new CreateTaskInputDTO(userId, request.taskName());
+        var dto = new CreateTaskInputDto(userId, request.taskName());
         var output = createTaskUseCase.execute(dto);
 
         var response = TaskResponse.of(output);
@@ -79,13 +79,13 @@ public class TaskController implements TaskControllerDoc {
 
         var userId = AuthenticatedUserResolver.getUserId();
 
-        var dto = new ListTasksInputDTO(userId);
+        var dto = new ListTasksInputDto(userId);
         var output = listTasksUseCase.execute(dto)
                 .stream()
                 .map(TaskResponse::of)
                 .toList();
 
-        LOGGER.info("Listing tasks - count={}", output.size());
+        LOGGER.info("Listing tasks - response count: {}", output.size());
         return ResponseEntity.ok(output);
     }
 
@@ -96,7 +96,7 @@ public class TaskController implements TaskControllerDoc {
 
         var userId = AuthenticatedUserResolver.getUserId();
 
-        var dto = new UpdateTaskInputDTO(taskId, userId, request.taskName());
+        var dto = new UpdateTaskInputDto(taskId, userId, request.taskName());
         var output = updateTaskUseCase.execute(dto);
 
         var response = TaskResponse.of(output);
@@ -111,7 +111,7 @@ public class TaskController implements TaskControllerDoc {
 
         var userId = AuthenticatedUserResolver.getUserId();
 
-        var dto = new DeleteTaskInputDTO(taskId, userId);
+        var dto = new DeleteTaskInputDto(taskId, userId);
         deleteTaskUseCase.execute(dto);
 
         LOGGER.info("Task deleted successfully - task id={}", taskId);
@@ -124,7 +124,7 @@ public class TaskController implements TaskControllerDoc {
 
         var userId = AuthenticatedUserResolver.getUserId();
 
-        var dto = new MarkTaskAsFinishedInputDTO(taskId, userId);
+        var dto = new MarkTaskAsFinishedInputDto(taskId, userId);
         markTaskAsFinishedUseCase.execute(dto);
 
         LOGGER.info("Task marked as finished successfully - task id={}", taskId);

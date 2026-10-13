@@ -19,7 +19,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import com.jpmns.task.core.application.port.persistence.repository.UserRepository;
 import com.jpmns.task.core.application.port.security.Token;
 import com.jpmns.task.core.application.port.security.dto.DecodeTokenDto;
-import com.jpmns.task.core.application.usecase.user.dto.input.RefreshUserTokenInputDTO;
+import com.jpmns.task.core.application.usecase.user.dto.input.RefreshUserTokenInputDto;
 import com.jpmns.task.core.application.usecase.user.exception.UserNotFoundException;
 import com.jpmns.task.core.domain.common.valueobject.exception.InvalidIdValueObjectException;
 import com.jpmns.task.shared.fixture.UserFixture;
@@ -45,7 +45,7 @@ class RefreshUserTokenUseCaseTest {
         var newRefreshToken = "new-refresh-token";
         var user = UserFixture.aUser();
         var userId = user.getId();
-        var input = new RefreshUserTokenInputDTO(REFRESH_TOKEN);
+        var input = new RefreshUserTokenInputDto(REFRESH_TOKEN);
 
         when(token.tokenValidation(REFRESH_TOKEN)).thenReturn(new DecodeTokenDto(userId.asString()));
         when(userRepository.findById(userId)).thenReturn(Optional.of(user));
@@ -64,7 +64,7 @@ class RefreshUserTokenUseCaseTest {
     @DisplayName("Should throw when token subject is not a valid user ID")
     void shouldThrowWhenTokenSubjectIsInvalidUserId() {
         var invalidUserId = "not-a-valid-uuid";
-        var input = new RefreshUserTokenInputDTO(REFRESH_TOKEN);
+        var input = new RefreshUserTokenInputDto(REFRESH_TOKEN);
 
         when(token.tokenValidation(REFRESH_TOKEN)).thenReturn(new DecodeTokenDto(invalidUserId));
 
@@ -80,7 +80,7 @@ class RefreshUserTokenUseCaseTest {
     void shouldThrowWhenUserNotFound() {
         var user = UserFixture.aUser();
         var userId = user.getId();
-        var input = new RefreshUserTokenInputDTO(REFRESH_TOKEN);
+        var input = new RefreshUserTokenInputDto(REFRESH_TOKEN);
 
         when(token.tokenValidation(REFRESH_TOKEN)).thenReturn(new DecodeTokenDto(userId.asString()));
         when(userRepository.findById(userId)).thenReturn(Optional.empty());

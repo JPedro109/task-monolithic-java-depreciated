@@ -4,7 +4,7 @@ import org.springframework.stereotype.Service;
 
 import com.jpmns.task.core.application.port.persistence.repository.UserRepository;
 import com.jpmns.task.core.application.port.security.PasswordEncoder;
-import com.jpmns.task.core.application.usecase.user.dto.input.UpdateUserPasswordInputDTO;
+import com.jpmns.task.core.application.usecase.user.dto.input.UpdateUserPasswordInputDto;
 import com.jpmns.task.core.application.usecase.user.exception.InvalidCredentialsException;
 import com.jpmns.task.core.application.usecase.user.exception.UserNotFoundException;
 import com.jpmns.task.core.domain.common.valueobject.IdValueObject;
@@ -20,7 +20,7 @@ public class UpdateUserPasswordUseCase {
         this.passwordEncoder = passwordEncoder;
     }
 
-    public void execute(UpdateUserPasswordInputDTO input) {
+    public void execute(UpdateUserPasswordInputDto input) {
         var userIdValue = IdValueObject.of(input.userId()).getValueOrThrow();
 
         var user = userRepository.findById(userIdValue).orElseThrow(UserNotFoundException::new);

@@ -13,7 +13,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.jpmns.task.core.application.port.persistence.repository.TaskRepository;
-import com.jpmns.task.core.application.usecase.task.dto.input.ListTasksInputDTO;
+import com.jpmns.task.core.application.usecase.task.dto.input.ListTasksInputDto;
 import com.jpmns.task.shared.fixture.TaskFixture;
 import com.jpmns.task.shared.fixture.UserFixture;
 
@@ -37,7 +37,7 @@ class ListTasksUseCaseTest {
 
         when(taskRepository.findAllByUserId(userId)).thenReturn(tasks);
 
-        var output = useCase.execute(new ListTasksInputDTO(userId.asString()));
+        var output = useCase.execute(new ListTasksInputDto(userId.asString()));
 
         assertThat(output).hasSize(3);
         assertThat(output.getFirst().id()).isEqualTo(taskOne.getId().asString());
@@ -55,7 +55,7 @@ class ListTasksUseCaseTest {
 
         when(taskRepository.findAllByUserId(userId)).thenReturn(List.of());
 
-        var output = useCase.execute(new ListTasksInputDTO(userId.asString()));
+        var output = useCase.execute(new ListTasksInputDto(userId.asString()));
 
         assertThat(output).isEmpty();
     }

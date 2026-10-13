@@ -14,9 +14,11 @@ import com.jpmns.task.core.application.port.security.exception.InvalidTokenExcep
 import com.jpmns.task.core.application.usecase.task.exception.TaskAccessDeniedException;
 import com.jpmns.task.core.application.usecase.task.exception.TaskNotFoundException;
 import com.jpmns.task.core.application.usecase.user.exception.InvalidCredentialsException;
+import com.jpmns.task.core.application.usecase.user.exception.SameUsernameException;
 import com.jpmns.task.core.application.usecase.user.exception.UserNotFoundException;
 import com.jpmns.task.core.application.usecase.user.exception.UsernameAlreadyExistsException;
 import com.jpmns.task.core.domain.common.exception.DomainException;
+import com.jpmns.task.core.presentation.controller.common.exception.UnauthenticatedException;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
@@ -57,11 +59,25 @@ public class GlobalExceptionHandler {
         return buildProblemDetail(HttpStatus.NOT_FOUND, ex.getMessage());
     }
 
+    @ExceptionHandler(SameUsernameException.class)
+    public ProblemDetail handleBadRequest(Exception ex) {
+        LOGGER.error("Bad request error: {}", ex.getMessage(), ex);
+
+        return buildProblemDetail(HttpStatus.BAD_REQUEST, ex.getMessage());
+    }
+
     @ExceptionHandler(UsernameAlreadyExistsException.class)
     public ProblemDetail handleConflict(Exception ex) {
         LOGGER.error("Conflict error: {}", ex.getMessage(), ex);
 
         return buildProblemDetail(HttpStatus.CONFLICT, ex.getMessage());
+    }
+
+    @ExceptionHandler(UnauthenticatedException.class)
+    public ProblemDetail handleUnauthenticated(UnauthenticatedException ex) {
+        LOGGER.error("Unauthenticated request: {}", ex.getMessage(), ex);
+
+        return buildProblemDetail(HttpStatus.UNAUTHORIZED, ex.getMessage());
     }
 
     @ExceptionHandler({InvalidCredentialsException.class, InvalidTokenException.class})

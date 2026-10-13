@@ -9,12 +9,13 @@ import org.junit.jupiter.params.provider.NullAndEmptySource;
 import org.junit.jupiter.params.provider.ValueSource;
 
 import com.jpmns.task.core.domain.task.valueobject.TaskNameValueObject;
+import com.jpmns.task.core.domain.task.valueobject.exception.InvalidTaskNameException;
 
 class TaskNameValueObjectTest {
 
     @Test
-    @DisplayName("Should create a valid TaskNameValueObject")
-    void shouldCreateValidTaskName() {
+    @DisplayName("Should create a valid TaskNameValueObject when the name is valid")
+    void shouldCreateValidTaskNameWhenNameIsValid() {
         var name = "Buy groceries";
 
         var result = TaskNameValueObject.of(name);
@@ -24,8 +25,8 @@ class TaskNameValueObjectTest {
     }
 
     @Test
-    @DisplayName("Should accept a name with exactly 255 characters")
-    void shouldAcceptExactMaxLength() {
+    @DisplayName("Should accept a name when it has exactly 255 characters")
+    void shouldAcceptExactMaxLengthWhenNameHas255Characters() {
         var name = "a".repeat(255);
 
         var result = TaskNameValueObject.of(name);
@@ -34,8 +35,8 @@ class TaskNameValueObjectTest {
     }
 
     @Test
-    @DisplayName("Should accept a single character name")
-    void shouldAcceptSingleCharacterName() {
+    @DisplayName("Should accept a single character name when the name has one character")
+    void shouldAcceptSingleCharacterNameWhenNameHasOneCharacter() {
         var name = "X";
 
         var result = TaskNameValueObject.of(name);
@@ -51,6 +52,7 @@ class TaskNameValueObjectTest {
         var result = TaskNameValueObject.of(name);
 
         assertThat(result.isFail()).isTrue();
+        assertThat(result.getError()).isInstanceOf(InvalidTaskNameException.class);
     }
 
     @ParameterizedTest
@@ -61,5 +63,6 @@ class TaskNameValueObjectTest {
         var result = TaskNameValueObject.of(name);
 
         assertThat(result.isFail()).isTrue();
+        assertThat(result.getError()).isInstanceOf(InvalidTaskNameException.class);
     }
 }

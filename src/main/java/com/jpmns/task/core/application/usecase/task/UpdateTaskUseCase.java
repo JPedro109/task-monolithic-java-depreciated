@@ -3,12 +3,12 @@ package com.jpmns.task.core.application.usecase.task;
 import org.springframework.stereotype.Service;
 
 import com.jpmns.task.core.application.port.persistence.repository.TaskRepository;
-import com.jpmns.task.core.application.usecase.task.dto.input.UpdateTaskInputDTO;
-import com.jpmns.task.core.application.usecase.task.dto.output.TaskOutputDTO;
+import com.jpmns.task.core.application.usecase.task.dto.input.UpdateTaskInputDto;
+import com.jpmns.task.core.application.usecase.task.dto.output.TaskOutputDto;
 import com.jpmns.task.core.application.usecase.task.exception.TaskAccessDeniedException;
 import com.jpmns.task.core.application.usecase.task.exception.TaskNotFoundException;
+import com.jpmns.task.core.application.usecase.task.mapper.TaskOutputMapper;
 import com.jpmns.task.core.domain.common.valueobject.IdValueObject;
-import com.jpmns.task.core.domain.task.TaskEntity;
 
 @Service
 public class UpdateTaskUseCase {
@@ -19,7 +19,7 @@ public class UpdateTaskUseCase {
         this.taskRepository = taskRepository;
     }
 
-    public TaskOutputDTO execute(UpdateTaskInputDTO input) {
+    public TaskOutputDto execute(UpdateTaskInputDto input) {
         var taskIdValue = IdValueObject.of(input.taskId()).getValueOrThrow();
 
         var task = taskRepository.findById(taskIdValue).orElseThrow(TaskNotFoundException::new);
@@ -32,16 +32,6 @@ public class UpdateTaskUseCase {
         task.updateTaskName(input.taskName());
         var saved = taskRepository.save(task);
 
-        return toOutput(saved);
-    }
-
-    private TaskOutputDTO toOutput(TaskEntity task) {
-        return new TaskOutputDTO(
-                task.getId().asString(),
-                task.getUserId().asString(),
-                task.getTaskName().asString(),
-                task.getFinished(),
-                task.getCreatedAt()
-        );
+        return TaskOutputMapper.toOutput(saved);
     }
 }

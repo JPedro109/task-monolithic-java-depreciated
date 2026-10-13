@@ -3,7 +3,7 @@ package com.jpmns.task.core.application.usecase.task;
 import org.springframework.stereotype.Service;
 
 import com.jpmns.task.core.application.port.persistence.repository.TaskRepository;
-import com.jpmns.task.core.application.usecase.task.dto.input.DeleteTaskInputDTO;
+import com.jpmns.task.core.application.usecase.task.dto.input.DeleteTaskInputDto;
 import com.jpmns.task.core.application.usecase.task.exception.TaskAccessDeniedException;
 import com.jpmns.task.core.application.usecase.task.exception.TaskNotFoundException;
 import com.jpmns.task.core.domain.common.valueobject.IdValueObject;
@@ -17,7 +17,7 @@ public class DeleteTaskUseCase {
         this.taskRepository = taskRepository;
     }
 
-    public void execute(DeleteTaskInputDTO input) {
+    public void execute(DeleteTaskInputDto input) {
         var taskIdValue = IdValueObject.of(input.taskId()).getValueOrThrow();
 
         var task = taskRepository.findById(taskIdValue).orElseThrow(TaskNotFoundException::new);

@@ -117,6 +117,24 @@ public interface AuthControllerDoc {
                     )
             ),
             @ApiResponse(
+                    responseCode = "422",
+                    description = "Dados semanticamente inválidos para as regras de domínio",
+                    content = @Content(
+                            mediaType = "application/json",
+                            examples = @ExampleObject(
+                                    name = "Username inválido",
+                                    value = """
+                                            {
+                                              "type": "about:blank",
+                                              "title": "Unprocessable Content",
+                                              "status": 422,
+                                              "detail": "Username is invalid"
+                                            }
+                                            """
+                            )
+                    )
+            ),
+            @ApiResponse(
                     responseCode = "500",
                     description = "Erro interno inesperado",
                     content = @Content(

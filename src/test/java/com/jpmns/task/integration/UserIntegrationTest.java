@@ -19,6 +19,7 @@ import com.jpmns.task.shared.security.WithJwtTokenMock;
 @DisplayName("User Integration Tests")
 class UserIntegrationTest extends IntegrationTestBase {
     private static final String EXISTING_USERNAME = "john";
+    private static final String OTHER_USERNAME = "peter";
     private static final String PASSWORD = "password";
 
     @Nested
@@ -136,12 +137,21 @@ class UserIntegrationTest extends IntegrationTestBase {
         }
 
         @Test
-        @DisplayName("Should return 409 when new username is already taken")
+        @DisplayName("Should return 409 when new username is already taken by another user")
         @SqlCreateSeed
         @WithJwtTokenMock
-        void shouldReturn409WhenUsernameAlreadyTaken() throws Exception {
-            perform(EXISTING_USERNAME)
+        void shouldReturn409WhenUsernameAlreadyTakenByAnotherUser() throws Exception {
+            perform(OTHER_USERNAME)
                     .andExpect(status().isConflict());
+        }
+
+        @Test
+        @DisplayName("Should return 400 when new username equals the current one")
+        @SqlCreateSeed
+        @WithJwtTokenMock
+        void shouldReturn400WhenNewUsernameEqualsCurrent() throws Exception {
+            perform(EXISTING_USERNAME)
+                    .andExpect(status().isBadRequest());
         }
 
         @Test

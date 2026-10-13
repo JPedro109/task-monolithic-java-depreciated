@@ -35,17 +35,17 @@ import com.jpmns.task.core.application.usecase.task.DeleteTaskUseCase;
 import com.jpmns.task.core.application.usecase.task.ListTasksUseCase;
 import com.jpmns.task.core.application.usecase.task.MarkTaskAsFinishedUseCase;
 import com.jpmns.task.core.application.usecase.task.UpdateTaskUseCase;
-import com.jpmns.task.core.application.usecase.task.dto.output.TaskOutputDTO;
+import com.jpmns.task.core.application.usecase.task.dto.output.TaskOutputDto;
 import com.jpmns.task.core.application.usecase.task.exception.TaskAccessDeniedException;
 import com.jpmns.task.core.application.usecase.task.exception.TaskNotFoundException;
-import com.jpmns.task.core.application.usecase.user.GetUserByIdUseCase;
 import com.jpmns.task.core.domain.task.TaskEntity;
 import com.jpmns.task.core.presentation.controller.common.handler.GlobalExceptionHandler;
+import com.jpmns.task.core.presentation.controller.common.resolver.AuthenticatedUserResolver;
 import com.jpmns.task.shared.fixture.TaskFixture;
 import com.jpmns.task.shared.security.WithJwtTokenMock;
 
 @WebMvcTest(TaskController.class)
-@Import({SecurityConfig.class, GlobalExceptionHandler.class})
+@Import({SecurityConfig.class, GlobalExceptionHandler.class, AuthenticatedUserResolver.class})
 class TaskControllerTest {
 
     @Autowired
@@ -69,9 +69,6 @@ class TaskControllerTest {
     @MockitoBean
     private Token token;
 
-    @MockitoBean
-    private GetUserByIdUseCase getUserByIdUseCase;
-
     @Nested
     @DisplayName("POST /api/v1/tasks")
     class CreateTask {
@@ -83,7 +80,7 @@ class TaskControllerTest {
             var task = TaskFixture.aTask();
             var taskId = task.getId();
             var taskName = task.getTaskName();
-            var taskFinished = task.getFinished();
+            var taskFinished = task.isFinished();
             var userId = task.getUserId();
             var output = buildTaskOutput(task);
 
@@ -197,15 +194,16 @@ class TaskControllerTest {
         void shouldReturn200WhenTaskIsUpdatedSuccessfully() throws Exception {
             var task = TaskFixture.aTask();
             var taskId = task.getId();
-            var taskFinished = task.getFinished();
+            var taskFinished = task.isFinished();
             var userId = task.getUserId();
             var updatedTaskName = "Updated task name";
-            var output = new TaskOutputDTO(
+            var createdAt = Instant.parse("2024-01-01T00:00:00Z");
+            var output = new TaskOutputDto(
                     taskId.asString(),
                     userId.asString(),
                     updatedTaskName,
                     taskFinished,
-                    Instant.now()
+                    createdAt
             );
 
             when(updateTaskUseCase.execute(any())).thenReturn(output);
@@ -396,14 +394,14 @@ class TaskControllerTest {
         }
     }
 
-    private TaskOutputDTO buildTaskOutput(TaskEntity task) {
+    private TaskOutputDto buildTaskOutput(TaskEntity task) {
         var taskId = task.getId();
         var userId = task.getUserId();
         var taskName = task.getTaskName();
-        var finished = task.getFinished();
+        var finished = task.isFinished();
         var createdAt = task.getCreatedAt();
 
-        return new TaskOutputDTO(
+        return new TaskOutputDto(
                 taskId.asString(),
                 userId.asString(),
                 taskName.asString(),

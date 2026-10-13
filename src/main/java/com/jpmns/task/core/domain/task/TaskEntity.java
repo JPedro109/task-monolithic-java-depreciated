@@ -46,7 +46,7 @@ public class TaskEntity extends Entity {
         return userId;
     }
 
-    public boolean getFinished() {
+    public boolean isFinished() {
         return finished;
     }
 

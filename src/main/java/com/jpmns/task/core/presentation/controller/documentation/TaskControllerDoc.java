@@ -119,6 +119,24 @@ public interface TaskControllerDoc {
                     )
             ),
             @ApiResponse(
+                    responseCode = "422",
+                    description = "Dados semanticamente inválidos para as regras de domínio",
+                    content = @Content(
+                            mediaType = "application/json",
+                            examples = @ExampleObject(
+                                    name = "Nome de tarefa inválido",
+                                    value = """
+                                            {
+                                              "type": "about:blank",
+                                              "title": "Unprocessable Content",
+                                              "status": 422,
+                                              "detail": "Task name is invalid"
+                                            }
+                                            """
+                            )
+                    )
+            ),
+            @ApiResponse(
                     responseCode = "500",
                     description = "Erro interno inesperado",
                     content = @Content(
@@ -349,6 +367,24 @@ public interface TaskControllerDoc {
                                               "title": "Not Found",
                                               "status": 404,
                                               "detail": "Task not found"
+                                            }
+                                            """
+                            )
+                    )
+            ),
+            @ApiResponse(
+                    responseCode = "422",
+                    description = "Dados semanticamente inválidos para as regras de domínio",
+                    content = @Content(
+                            mediaType = "application/json",
+                            examples = @ExampleObject(
+                                    name = "Nome de tarefa inválido",
+                                    value = """
+                                            {
+                                              "type": "about:blank",
+                                              "title": "Unprocessable Content",
+                                              "status": 422,
+                                              "detail": "Task name is invalid"
                                             }
                                             """
                             )

@@ -140,6 +140,24 @@ public interface UserControllerDoc {
                     )
             ),
             @ApiResponse(
+                    responseCode = "422",
+                    description = "Dados semanticamente inválidos para as regras de domínio",
+                    content = @Content(
+                            mediaType = "application/json",
+                            examples = @ExampleObject(
+                                    name = "Username inválido",
+                                    value = """
+                                            {
+                                              "type": "about:blank",
+                                              "title": "Unprocessable Content",
+                                              "status": 422,
+                                              "detail": "Username is invalid"
+                                            }
+                                            """
+                            )
+                    )
+            ),
+            @ApiResponse(
                     responseCode = "500",
                     description = "Erro interno inesperado",
                     content = @Content(
@@ -322,6 +340,24 @@ public interface UserControllerDoc {
                     )
             ),
             @ApiResponse(
+                    responseCode = "422",
+                    description = "Dados semanticamente inválidos para as regras de domínio",
+                    content = @Content(
+                            mediaType = "application/json",
+                            examples = @ExampleObject(
+                                    name = "Senha inválida",
+                                    value = """
+                                            {
+                                              "type": "about:blank",
+                                              "title": "Unprocessable Content",
+                                              "status": 422,
+                                              "detail": "Password is invalid"
+                                            }
+                                            """
+                            )
+                    )
+            ),
+            @ApiResponse(
                     responseCode = "500",
                     description = "Erro interno inesperado",
                     content = @Content(
@@ -446,6 +482,24 @@ public interface UserControllerDoc {
                                               "title": "Conflict",
                                               "status": 409,
                                               "detail": "Username already exists"
+                                            }
+                                            """
+                            )
+                    )
+            ),
+            @ApiResponse(
+                    responseCode = "422",
+                    description = "Dados semanticamente inválidos para as regras de domínio",
+                    content = @Content(
+                            mediaType = "application/json",
+                            examples = @ExampleObject(
+                                    name = "Username inválido",
+                                    value = """
+                                            {
+                                              "type": "about:blank",
+                                              "title": "Unprocessable Content",
+                                              "status": 422,
+                                              "detail": "Username is invalid"
                                             }
                                             """
                             )

@@ -15,7 +15,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.jpmns.task.core.application.port.persistence.repository.TaskRepository;
-import com.jpmns.task.core.application.usecase.task.dto.input.CreateTaskInputDTO;
+import com.jpmns.task.core.application.usecase.task.dto.input.CreateTaskInputDto;
 import com.jpmns.task.core.domain.common.exception.DomainException;
 import com.jpmns.task.shared.fixture.TaskFixture;
 
@@ -34,7 +34,7 @@ class CreateTaskUseCaseTest {
         var savedTask = TaskFixture.aTask();
         var taskName = savedTask.getTaskName();
         var userId = savedTask.getUserId();
-        var input = new CreateTaskInputDTO(userId.asString(), taskName.asString());
+        var input = new CreateTaskInputDto(userId.asString(), taskName.asString());
 
         when(taskRepository.save(any())).thenReturn(savedTask);
 
@@ -53,7 +53,7 @@ class CreateTaskUseCaseTest {
     void shouldThrowWhenTaskNameIsBlank() {
         var task = TaskFixture.aTask();
         var userId = task.getUserId();
-        var input = new CreateTaskInputDTO(userId.asString(), "");
+        var input = new CreateTaskInputDto(userId.asString(), "");
 
         assertThatThrownBy(() -> useCase.execute(input))
                 .isInstanceOf(DomainException.class);
@@ -64,7 +64,9 @@ class CreateTaskUseCaseTest {
     @Test
     @DisplayName("Should throw when user id is not a valid UUID")
     void shouldThrowWhenUserIdIsInvalid() {
-        var input = new CreateTaskInputDTO("not-a-valid-uuid", "Buy groceries");
+        var savedTask = TaskFixture.aTask();
+        var taskName = savedTask.getTaskName();
+        var input = new CreateTaskInputDto("not-a-valid-uuid", taskName.asString());
 
         assertThatThrownBy(() -> useCase.execute(input))
                 .isInstanceOf(DomainException.class);

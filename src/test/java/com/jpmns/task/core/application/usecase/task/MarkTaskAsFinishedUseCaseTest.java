@@ -17,7 +17,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.jpmns.task.core.application.port.persistence.repository.TaskRepository;
-import com.jpmns.task.core.application.usecase.task.dto.input.MarkTaskAsFinishedInputDTO;
+import com.jpmns.task.core.application.usecase.task.dto.input.MarkTaskAsFinishedInputDto;
 import com.jpmns.task.core.application.usecase.task.exception.TaskAccessDeniedException;
 import com.jpmns.task.core.application.usecase.task.exception.TaskNotFoundException;
 import com.jpmns.task.shared.fixture.TaskFixture;
@@ -38,14 +38,14 @@ class MarkTaskAsFinishedUseCaseTest {
         var task = TaskFixture.aTask();
         var taskId = task.getId();
         var userId = task.getUserId();
-        var input = new MarkTaskAsFinishedInputDTO(taskId.asString(), userId.asString());
+        var input = new MarkTaskAsFinishedInputDto(taskId.asString(), userId.asString());
 
         when(taskRepository.findById(taskId)).thenReturn(Optional.of(task));
         when(taskRepository.save(task)).thenReturn(task);
 
         useCase.execute(input);
 
-        assertThat(task.getFinished()).isTrue();
+        assertThat(task.isFinished()).isTrue();
         verify(taskRepository).save(task);
     }
 
@@ -55,7 +55,7 @@ class MarkTaskAsFinishedUseCaseTest {
         var task = TaskFixture.aTask();
         var taskId = task.getId();
         var userId = task.getUserId();
-        var input = new MarkTaskAsFinishedInputDTO(taskId.asString(), userId.asString());
+        var input = new MarkTaskAsFinishedInputDto(taskId.asString(), userId.asString());
 
         when(taskRepository.findById(taskId)).thenReturn(Optional.empty());
 
@@ -72,7 +72,7 @@ class MarkTaskAsFinishedUseCaseTest {
         var userId = user.getId();
         var task = TaskFixture.aTask();
         var taskId = task.getId();
-        var input = new MarkTaskAsFinishedInputDTO(taskId.asString(), userId.asString());
+        var input = new MarkTaskAsFinishedInputDto(taskId.asString(), userId.asString());
 
         when(taskRepository.findById(taskId)).thenReturn(Optional.of(task));
 

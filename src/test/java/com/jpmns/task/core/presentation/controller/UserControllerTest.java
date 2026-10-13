@@ -27,20 +27,20 @@ import com.jpmns.task.configuration.security.SecurityConfig;
 import com.jpmns.task.core.application.port.security.Token;
 import com.jpmns.task.core.application.usecase.user.CreateUserUseCase;
 import com.jpmns.task.core.application.usecase.user.DeleteUserUseCase;
-import com.jpmns.task.core.application.usecase.user.GetUserByIdUseCase;
 import com.jpmns.task.core.application.usecase.user.UpdateUserPasswordUseCase;
 import com.jpmns.task.core.application.usecase.user.UpdateUsernameUseCase;
-import com.jpmns.task.core.application.usecase.user.dto.output.CreateUserOutputDTO;
-import com.jpmns.task.core.application.usecase.user.dto.output.UpdateUsernameOutputDTO;
+import com.jpmns.task.core.application.usecase.user.dto.output.CreateUserOutputDto;
+import com.jpmns.task.core.application.usecase.user.dto.output.UpdateUsernameOutputDto;
 import com.jpmns.task.core.application.usecase.user.exception.InvalidCredentialsException;
 import com.jpmns.task.core.application.usecase.user.exception.UserNotFoundException;
 import com.jpmns.task.core.application.usecase.user.exception.UsernameAlreadyExistsException;
 import com.jpmns.task.core.presentation.controller.common.handler.GlobalExceptionHandler;
+import com.jpmns.task.core.presentation.controller.common.resolver.AuthenticatedUserResolver;
 import com.jpmns.task.shared.fixture.UserFixture;
 import com.jpmns.task.shared.security.WithJwtTokenMock;
 
 @WebMvcTest(UserController.class)
-@Import({SecurityConfig.class, GlobalExceptionHandler.class})
+@Import({SecurityConfig.class, GlobalExceptionHandler.class, AuthenticatedUserResolver.class})
 class UserControllerTest {
 
     @Autowired
@@ -61,9 +61,6 @@ class UserControllerTest {
     @MockitoBean
     private Token token;
 
-    @MockitoBean
-    private GetUserByIdUseCase getUserByIdUseCase;
-
     @Nested
     @DisplayName("POST /api/v1/users")
     class CreateUser {
@@ -75,7 +72,7 @@ class UserControllerTest {
             var userId = user.getId();
             var username = user.getUsername();
             var password = user.getPassword();
-            var output = new CreateUserOutputDTO(userId.asString(), username.asString());
+            var output = new CreateUserOutputDto(userId.asString(), username.asString());
 
             when(createUserUseCase.execute(any())).thenReturn(output);
 
@@ -259,7 +256,7 @@ class UserControllerTest {
             var user = UserFixture.aUser();
             var userId = user.getId();
             var username = user.getUsername();
-            var output = new UpdateUsernameOutputDTO(userId.asString(), username.asString());
+            var output = new UpdateUsernameOutputDto(userId.asString(), username.asString());
 
             when(updateUsernameUseCase.execute(any())).thenReturn(output);
 

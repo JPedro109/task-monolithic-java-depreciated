@@ -2,20 +2,23 @@ package com.jpmns.task.core.domain.common.valueobject;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import java.util.UUID;
-
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.NullAndEmptySource;
 import org.junit.jupiter.params.provider.ValueSource;
 
+import com.jpmns.task.core.domain.common.valueobject.exception.InvalidIdValueObjectException;
+
 class IdValueObjectTest {
 
+    private static final String VALID_UUID = "b2c3d4e5-f6a7-8901-bcde-f12345678901";
+    private static final String VALID_UPPERCASE_UUID = "B2C3D4E5-F6A7-8901-BCDE-F12345678901";
+
     @Test
-    @DisplayName("Should create a valid IdValueObject from a UUID string")
-    void shouldCreateValidId() {
-        var uuid = UUID.randomUUID().toString();
+    @DisplayName("Should create a valid IdValueObject when the value is a UUID string")
+    void shouldCreateValidIdWhenValueIsUuid() {
+        var uuid = VALID_UUID;
 
         var result = IdValueObject.of(uuid);
 
@@ -24,9 +27,9 @@ class IdValueObjectTest {
     }
 
     @Test
-    @DisplayName("Should accept an uppercase UUID string")
-    void shouldAcceptUpperCaseUUID() {
-        var uuid = UUID.randomUUID().toString().toUpperCase();
+    @DisplayName("Should accept an uppercase UUID string when the value is a valid UUID")
+    void shouldAcceptUpperCaseUuidWhenValueIsValid() {
+        var uuid = VALID_UPPERCASE_UUID;
 
         var result = IdValueObject.of(uuid);
 
@@ -47,5 +50,6 @@ class IdValueObjectTest {
         var result = IdValueObject.of(id);
 
         assertThat(result.isFail()).isTrue();
+        assertThat(result.getError()).isInstanceOf(InvalidIdValueObjectException.class);
     }
 }

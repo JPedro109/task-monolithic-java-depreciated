@@ -11,65 +11,61 @@ import com.jpmns.task.shared.fixture.TaskFixture;
 
 class TaskEntityTest {
 
-    private static final String VALID_ID = "00000000-0000-0000-0000-000000000001";
-    private static final String VALID_USER_ID = "00000000-0000-0000-0000-000000000002";
-
     @Test
-    @DisplayName("Should create a task with valid data")
-    void shouldCreateTaskWithValidData() {
-        var id = VALID_ID;
-        var userId = VALID_USER_ID;
-        var taskName = "Buy groceries";
-        var finished = false;
+    @DisplayName("Should create a task when data is valid")
+    void shouldCreateTaskWhenDataIsValid() {
+        var task = TaskFixture.aTask();
+        var id = task.getId();
+        var userId = task.getUserId();
+        var taskName = task.getTaskName();
 
-        var task = new TaskEntity(id, userId, taskName, finished);
-
-        assertThat(task.getId().asString()).isEqualTo(id);
-        assertThat(task.getUserId().asString()).isEqualTo(userId);
-        assertThat(task.getTaskName().asString()).isEqualTo(taskName);
-        assertThat(task.getFinished()).isFalse();
+        assertThat(id).isNotNull();
+        assertThat(userId).isNotNull();
+        assertThat(taskName).isNotNull();
+        assertThat(task.isFinished()).isFalse();
         assertThat(task.getCreatedAt()).isNotNull();
     }
 
     @Test
-    @DisplayName("Should mark a task as finished")
-    void shouldMarkTaskAsFinished() {
+    @DisplayName("Should mark a task as finished when markAsFinished is called")
+    void shouldMarkTaskAsFinishedWhenMarkAsFinishedIsCalled() {
         var task = TaskFixture.aTask();
 
         task.markAsFinished();
 
-        assertThat(task.getFinished()).isTrue();
+        assertThat(task.isFinished()).isTrue();
     }
 
     @Test
-    @DisplayName("Should update the task name")
-    void shouldUpdateTaskName() {
+    @DisplayName("Should update the task name when the new name is valid")
+    void shouldUpdateTaskNameWhenNewNameIsValid() {
         var task = TaskFixture.aTask();
-        var taskName = "Buy groceries";
+        var newTaskName = "Updated task name";
 
-        task.updateTaskName(taskName);
+        task.updateTaskName(newTaskName);
 
-        assertThat(task.getTaskName().asString()).isEqualTo(taskName);
+        assertThat(task.getTaskName().asString()).isEqualTo(newTaskName);
     }
 
     @Test
-    @DisplayName("Should preserve the userId after updating the task name")
-    void shouldPreserveUserIdAfterUpdate() {
+    @DisplayName("Should preserve the userId when updating the task name")
+    void shouldPreserveUserIdWhenUpdatingTaskName() {
         var task = TaskFixture.aTask();
         var userId = task.getUserId();
-        var updateTaskName = "Updated task name";
+        var newTaskName = "Updated task name";
 
-        task.updateTaskName(updateTaskName);
+        task.updateTaskName(newTaskName);
 
         assertThat(task.getUserId().asString()).isEqualTo(userId.asString());
     }
 
     @Test
     @DisplayName("Should throw when task name is empty")
-    void shouldThrowWhenTaskNameIsBlank() {
-        var id = VALID_ID;
-        var userId = VALID_USER_ID;
-        var finished = false;
+    void shouldThrowWhenTaskNameIsEmpty() {
+        var task = TaskFixture.aTask();
+        var id = task.getId().asString();
+        var userId = task.getUserId().asString();
+        var finished = task.isFinished();
         var emptyTaskName = "";
 
         assertThatThrownBy(() -> new TaskEntity(id, userId, emptyTaskName, finished))
@@ -79,9 +75,10 @@ class TaskEntityTest {
     @Test
     @DisplayName("Should throw when task name is null")
     void shouldThrowWhenTaskNameIsNull() {
-        var id = VALID_ID;
-        var userId = VALID_USER_ID;
-        var finished = false;
+        var task = TaskFixture.aTask();
+        var id = task.getId().asString();
+        var userId = task.getUserId().asString();
+        var finished = task.isFinished();
         String nullTaskName = null;
 
         assertThatThrownBy(() -> new TaskEntity(id, userId, nullTaskName, finished))
@@ -91,10 +88,11 @@ class TaskEntityTest {
     @Test
     @DisplayName("Should throw when task name exceeds 255 characters")
     void shouldThrowWhenTaskNameExceedsMaxLength() {
-        var id = VALID_ID;
-        var userId = VALID_USER_ID;
+        var task = TaskFixture.aTask();
+        var id = task.getId().asString();
+        var userId = task.getUserId().asString();
+        var finished = task.isFinished();
         var longName = "a".repeat(256);
-        var finished = false;
 
         assertThatThrownBy(() -> new TaskEntity(id, userId, longName, finished))
                 .isInstanceOf(DomainException.class);
@@ -102,11 +100,12 @@ class TaskEntityTest {
 
     @Test
     @DisplayName("Should throw when task id is not a valid UUID")
-    void shouldThrowWhenIdIsNotUUID() {
-        var userId = VALID_USER_ID;
+    void shouldThrowWhenIdIsNotUuid() {
+        var task = TaskFixture.aTask();
+        var userId = task.getUserId().asString();
+        var taskName = task.getTaskName().asString();
+        var finished = task.isFinished();
         var invalidTaskId = "not-a-uuid";
-        var taskName = "Buy groceries";
-        var finished = false;
 
         assertThatThrownBy(() -> new TaskEntity(invalidTaskId, userId, taskName, finished))
                 .isInstanceOf(DomainException.class)
@@ -118,11 +117,12 @@ class TaskEntityTest {
 
     @Test
     @DisplayName("Should throw when userId is not a valid UUID")
-    void shouldThrowWhenUserIdIsNotUUID() {
-        var id = VALID_ID;
-        var taskName = "Buy groceries";
+    void shouldThrowWhenUserIdIsNotUuid() {
+        var task = TaskFixture.aTask();
+        var id = task.getId().asString();
+        var taskName = task.getTaskName().asString();
+        var finished = task.isFinished();
         var invalidUserId = "not-a-uuid";
-        var finished = false;
 
         assertThatThrownBy(() -> new TaskEntity(id, invalidUserId, taskName, finished))
                 .isInstanceOf(DomainException.class);

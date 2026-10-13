@@ -17,10 +17,10 @@ import com.jpmns.task.core.application.usecase.user.CreateUserUseCase;
 import com.jpmns.task.core.application.usecase.user.DeleteUserUseCase;
 import com.jpmns.task.core.application.usecase.user.UpdateUserPasswordUseCase;
 import com.jpmns.task.core.application.usecase.user.UpdateUsernameUseCase;
-import com.jpmns.task.core.application.usecase.user.dto.input.CreateUserInputDTO;
-import com.jpmns.task.core.application.usecase.user.dto.input.DeleteUserInputDTO;
-import com.jpmns.task.core.application.usecase.user.dto.input.UpdateUserPasswordInputDTO;
-import com.jpmns.task.core.application.usecase.user.dto.input.UpdateUsernameInputDTO;
+import com.jpmns.task.core.application.usecase.user.dto.input.CreateUserInputDto;
+import com.jpmns.task.core.application.usecase.user.dto.input.DeleteUserInputDto;
+import com.jpmns.task.core.application.usecase.user.dto.input.UpdateUserPasswordInputDto;
+import com.jpmns.task.core.application.usecase.user.dto.input.UpdateUsernameInputDto;
 import com.jpmns.task.core.presentation.controller.common.resolver.AuthenticatedUserResolver;
 import com.jpmns.task.core.presentation.controller.documentation.UserControllerDoc;
 import com.jpmns.task.core.presentation.controller.payload.user.request.CreateUserRequest;
@@ -54,7 +54,7 @@ public class UserController implements UserControllerDoc {
     public ResponseEntity<CreateUserResponse> createUser(@Valid @RequestBody CreateUserRequest request) {
         LOGGER.info("Creating user - request: {}", request);
 
-        var dto = new CreateUserInputDTO(request.username(), request.password());
+        var dto = new CreateUserInputDto(request.username(), request.password());
         var output = createUserUseCase.execute(dto);
 
         var response = CreateUserResponse.of(output);
@@ -68,7 +68,7 @@ public class UserController implements UserControllerDoc {
         LOGGER.info("Deleting user");
 
         var userId = AuthenticatedUserResolver.getUserId();
-        var dto = new DeleteUserInputDTO(userId);
+        var dto = new DeleteUserInputDto(userId);
 
         deleteUserUseCase.execute(dto);
 
@@ -81,7 +81,7 @@ public class UserController implements UserControllerDoc {
         LOGGER.info("Updating user password - request: {}", request);
 
         var userId = AuthenticatedUserResolver.getUserId();
-        var dto = new UpdateUserPasswordInputDTO(userId, request.currentPassword(), request.newPassword());
+        var dto = new UpdateUserPasswordInputDto(userId, request.currentPassword(), request.newPassword());
 
         updateUserPasswordUseCase.execute(dto);
 
@@ -95,7 +95,7 @@ public class UserController implements UserControllerDoc {
 
         var userId = AuthenticatedUserResolver.getUserId();
 
-        var dto = new UpdateUsernameInputDTO(userId, request.newUsername());
+        var dto = new UpdateUsernameInputDto(userId, request.newUsername());
         var output = updateUsernameUseCase.execute(dto);
 
         var response = UpdateUsernameResponse.of(output);

@@ -5,8 +5,8 @@ import org.springframework.stereotype.Service;
 import com.jpmns.task.core.application.port.persistence.repository.UserRepository;
 import com.jpmns.task.core.application.port.security.PasswordEncoder;
 import com.jpmns.task.core.application.port.security.Token;
-import com.jpmns.task.core.application.usecase.user.dto.input.UserLoginInputDTO;
-import com.jpmns.task.core.application.usecase.user.dto.output.UserLoginOutputDTO;
+import com.jpmns.task.core.application.usecase.user.dto.input.UserLoginInputDto;
+import com.jpmns.task.core.application.usecase.user.dto.output.UserLoginOutputDto;
 import com.jpmns.task.core.application.usecase.user.exception.InvalidCredentialsException;
 import com.jpmns.task.core.domain.user.valueobject.UsernameValueObject;
 
@@ -25,7 +25,7 @@ public class UserLoginUseCase {
         this.token = tokenProvider;
     }
 
-    public UserLoginOutputDTO execute(UserLoginInputDTO input) {
+    public UserLoginOutputDto execute(UserLoginInputDto input) {
         var usernameValue = UsernameValueObject.of(input.username()).getValueOrThrow();
 
         var user = userRepository.findByUsername(usernameValue).orElseThrow(InvalidCredentialsException::new);
@@ -37,6 +37,6 @@ public class UserLoginUseCase {
 
         var accessToken = token.generateAccessToken(user.getId().asString());
         var refreshToken = token.generateRefreshToken(user.getId().asString());
-        return new UserLoginOutputDTO(accessToken, refreshToken);
+        return new UserLoginOutputDto(accessToken, refreshToken);
     }
 }

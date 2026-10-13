@@ -5,7 +5,7 @@ import java.util.regex.Pattern;
 import com.jpmns.task.core.domain.user.valueobject.exception.InvalidUsernameException;
 import com.jpmns.task.shared.type.Result;
 
-public class UsernameValueObject {
+public final class UsernameValueObject {
 
     private static final Pattern USERNAME_PATTERN =
             Pattern.compile("^[a-zA-Z0-9_]{3,50}$");

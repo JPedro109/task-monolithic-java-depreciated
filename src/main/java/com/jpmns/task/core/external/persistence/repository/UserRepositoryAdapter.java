@@ -3,9 +3,13 @@ package com.jpmns.task.core.external.persistence.repository;
 import java.util.Optional;
 import java.util.UUID;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Repository;
 
 import com.jpmns.task.core.application.port.persistence.repository.UserRepository;
+import com.jpmns.task.core.application.usecase.user.exception.UsernameAlreadyExistsException;
 import com.jpmns.task.core.domain.common.valueobject.IdValueObject;
 import com.jpmns.task.core.domain.user.UserEntity;
 import com.jpmns.task.core.domain.user.valueobject.UsernameValueObject;
@@ -14,6 +18,8 @@ import com.jpmns.task.core.external.persistence.mapper.UserMapper;
 
 @Repository
 public class UserRepositoryAdapter implements UserRepository {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(UserRepositoryAdapter.class);
 
     private final UserJpaDao jpaRepository;
 
@@ -25,9 +31,15 @@ public class UserRepositoryAdapter implements UserRepository {
     public UserEntity save(UserEntity user) {
         var model = UserMapper.toModel(user);
 
-        var saved = jpaRepository.save(model);
+        try {
+            var saved = jpaRepository.save(model);
 
-        return UserMapper.toDomain(saved);
+            return UserMapper.toDomain(saved);
+        } catch (DataIntegrityViolationException ex) {
+            LOGGER.warn("Data integrity violation while saving user: {}", ex.getMessage(), ex);
+
+            throw new UsernameAlreadyExistsException();
+        }
     }
 
     @Override

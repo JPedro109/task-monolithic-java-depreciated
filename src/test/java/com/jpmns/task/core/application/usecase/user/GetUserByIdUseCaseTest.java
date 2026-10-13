@@ -15,7 +15,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.jpmns.task.core.application.port.persistence.repository.UserRepository;
-import com.jpmns.task.core.application.usecase.user.dto.input.GetUserByIdInputDTO;
+import com.jpmns.task.core.application.usecase.user.dto.input.GetUserByIdInputDto;
 import com.jpmns.task.core.application.usecase.user.exception.UserNotFoundException;
 import com.jpmns.task.core.domain.common.exception.DomainException;
 import com.jpmns.task.shared.fixture.UserFixture;
@@ -38,7 +38,7 @@ class GetUserByIdUseCaseTest {
 
         when(userRepository.findById(userId)).thenReturn(Optional.of(user));
 
-        var output = useCase.execute(new GetUserByIdInputDTO(userId.asString()));
+        var output = useCase.execute(new GetUserByIdInputDto(userId.asString()));
 
         assertThat(output.id()).isEqualTo(userId.asString());
         assertThat(output.username()).isEqualTo(username.asString());
@@ -54,7 +54,7 @@ class GetUserByIdUseCaseTest {
 
         when(userRepository.findById(userId)).thenReturn(Optional.empty());
 
-        assertThatThrownBy(() -> useCase.execute(new GetUserByIdInputDTO(userId.asString())))
+        assertThatThrownBy(() -> useCase.execute(new GetUserByIdInputDto(userId.asString())))
                 .isInstanceOf(UserNotFoundException.class);
 
         verify(userRepository).findById(userId);
@@ -63,7 +63,7 @@ class GetUserByIdUseCaseTest {
     @Test
     @DisplayName("Should throw DomainException when id is not a valid UUID")
     void shouldThrowWhenIdIsInvalid() {
-        assertThatThrownBy(() -> useCase.execute(new GetUserByIdInputDTO("not-a-uuid")))
+        assertThatThrownBy(() -> useCase.execute(new GetUserByIdInputDto("not-a-uuid")))
                 .isInstanceOf(DomainException.class);
     }
 }

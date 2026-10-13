@@ -25,8 +25,8 @@ class TokenAdapterTest {
     }
 
     @Test
-    @DisplayName("Should generate a non-null access token for a given subject")
-    void shouldGenerateAccessToken() {
+    @DisplayName("Should generate a non-null access token when a subject is given")
+    void shouldGenerateAccessTokenWhenSubjectIsGiven() {
         var user = UserFixture.aUser();
         var sub = user.getId().asString();
 
@@ -37,8 +37,8 @@ class TokenAdapterTest {
     }
 
     @Test
-    @DisplayName("Should generate a non-null refresh token for a given subject")
-    void shouldGenerateRefreshToken() {
+    @DisplayName("Should generate a non-null refresh token when a subject is given")
+    void shouldGenerateRefreshTokenWhenSubjectIsGiven() {
         var user = UserFixture.aUser();
         var sub = user.getId().asString();
 
@@ -49,8 +49,8 @@ class TokenAdapterTest {
     }
 
     @Test
-    @DisplayName("Should generate different tokens for access and refresh")
-    void shouldGenerateDifferentTokensForAccessAndRefresh() {
+    @DisplayName("Should generate different tokens when generating access and refresh for the same subject")
+    void shouldGenerateDifferentTokensWhenGeneratingAccessAndRefresh() {
         var user = UserFixture.aUser();
         var sub = user.getId().asString();
 

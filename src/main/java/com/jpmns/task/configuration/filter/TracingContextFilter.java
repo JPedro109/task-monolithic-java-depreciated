@@ -24,8 +24,8 @@ public class TracingContextFilter extends OncePerRequestFilter {
 
     private static final String HEADER_CORRELATION_ID = "correlation-id";
 
-    private static final String MDC_USER_ID = "user-id";
-    private static final String MDC_CORRELATION_ID = "correlation-id";
+    private static final String BAGGAGE_USER_ID = "user-id";
+    private static final String BAGGAGE_CORRELATION_ID = "correlation-id";
     private static final String MDC_PATH = "path";
     private static final String MDC_METHOD = "method";
 
@@ -61,10 +61,10 @@ public class TracingContextFilter extends OncePerRequestFilter {
     private void populate(HttpServletRequest request, BaggageBuilder baggageBuilder, String correlationId) {
         var userId = AuthenticatedUserResolver.getUserIdOrNull();
         if (userId != null && !userId.isBlank()) {
-            baggageBuilder.put(MDC_USER_ID, userId);
+            baggageBuilder.put(BAGGAGE_USER_ID, userId);
         }
 
-        baggageBuilder.put(MDC_CORRELATION_ID, correlationId);
+        baggageBuilder.put(BAGGAGE_CORRELATION_ID, correlationId);
 
         var uri = getUri(request);
         MDC.put(MDC_PATH, uri);

@@ -9,12 +9,13 @@ import org.junit.jupiter.params.provider.NullAndEmptySource;
 import org.junit.jupiter.params.provider.ValueSource;
 
 import com.jpmns.task.core.domain.user.valueobject.UsernameValueObject;
+import com.jpmns.task.core.domain.user.valueobject.exception.InvalidUsernameException;
 
 class UsernameValueObjectTest {
 
     @Test
-    @DisplayName("Should create a valid UsernameValueObject")
-    void shouldCreateValidUsername() {
+    @DisplayName("Should create a valid UsernameValueObject when the username is valid")
+    void shouldCreateValidUsernameWhenUsernameIsValid() {
         var username = "john_doe";
 
         var result = UsernameValueObject.of(username);
@@ -24,8 +25,8 @@ class UsernameValueObjectTest {
     }
 
     @Test
-    @DisplayName("Should accept a username with exactly 50 characters")
-    void shouldAcceptMaximumLength() {
+    @DisplayName("Should accept a username when it has exactly 50 characters")
+    void shouldAcceptMaximumLengthWhenUsernameHas50Characters() {
         var username = "a".repeat(50);
 
         var result = UsernameValueObject.of(username);
@@ -65,5 +66,6 @@ class UsernameValueObjectTest {
         var result = UsernameValueObject.of(username);
 
         assertThat(result.isFail()).isTrue();
+        assertThat(result.getError()).isInstanceOf(InvalidUsernameException.class);
     }
 }

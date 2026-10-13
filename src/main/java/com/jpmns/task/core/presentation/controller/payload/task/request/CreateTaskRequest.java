@@ -7,9 +7,4 @@ import com.jpmns.task.core.presentation.controller.documentation.payload.task.re
 
 public record CreateTaskRequest(
         @NotBlank @Size(max = 255) String taskName
-) implements CreateTaskRequestDoc {
-    @Override
-    public String toString() {
-        return "CreateTaskRequest{taskName='" + taskName + "'}";
-    }
-}
+) implements CreateTaskRequestDoc { }

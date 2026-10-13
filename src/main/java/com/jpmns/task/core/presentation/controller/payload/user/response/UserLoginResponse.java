@@ -1,6 +1,6 @@
 package com.jpmns.task.core.presentation.controller.payload.user.response;
 
-import com.jpmns.task.core.application.usecase.user.dto.output.UserLoginOutputDTO;
+import com.jpmns.task.core.application.usecase.user.dto.output.UserLoginOutputDto;
 import com.jpmns.task.core.presentation.controller.documentation.payload.user.response.UserLoginResponseDoc;
 
 public record UserLoginResponse(
@@ -8,7 +8,7 @@ public record UserLoginResponse(
         String refreshToken
 ) implements UserLoginResponseDoc {
 
-    public static UserLoginResponse of(UserLoginOutputDTO dto) {
+    public static UserLoginResponse of(UserLoginOutputDto dto) {
         return new UserLoginResponse(dto.accessToken(), dto.refreshToken());
     }
 

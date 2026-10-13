@@ -14,7 +14,7 @@ public class TaskMapper {
                 UUID.fromString(entity.getId().asString()),
                 UUID.fromString(entity.getUserId().asString()),
                 entity.getTaskName().asString(),
-                entity.getFinished(),
+                entity.isFinished(),
                 entity.getCreatedAt(),
                 entity.getUpdatedAt()
         );

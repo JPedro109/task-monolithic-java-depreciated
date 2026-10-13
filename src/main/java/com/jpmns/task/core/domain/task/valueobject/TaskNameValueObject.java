@@ -3,7 +3,7 @@ package com.jpmns.task.core.domain.task.valueobject;
 import com.jpmns.task.core.domain.task.valueobject.exception.InvalidTaskNameException;
 import com.jpmns.task.shared.type.Result;
 
-public class TaskNameValueObject {
+public final class TaskNameValueObject {
 
     private static final int MAX_LENGTH = 255;
 

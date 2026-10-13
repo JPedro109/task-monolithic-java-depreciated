@@ -19,7 +19,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import com.jpmns.task.core.application.port.persistence.repository.UserRepository;
 import com.jpmns.task.core.application.port.security.PasswordEncoder;
 import com.jpmns.task.core.application.port.security.Token;
-import com.jpmns.task.core.application.usecase.user.dto.input.UserLoginInputDTO;
+import com.jpmns.task.core.application.usecase.user.dto.input.UserLoginInputDto;
 import com.jpmns.task.core.application.usecase.user.exception.InvalidCredentialsException;
 import com.jpmns.task.shared.fixture.UserFixture;
 
@@ -48,7 +48,7 @@ class UserLoginUseCaseTest {
         var userId = user.getId();
         var username = user.getUsername();
         var password = user.getPassword();
-        var input = new UserLoginInputDTO(username.asString(), password.asString());
+        var input = new UserLoginInputDto(username.asString(), password.asString());
 
         when(userRepository.findByUsername(username)).thenReturn(Optional.of(user));
         when(passwordEncoder.matches(password.asString(), password.asString())).thenReturn(true);
@@ -70,7 +70,7 @@ class UserLoginUseCaseTest {
 
         when(userRepository.findByUsername(username)).thenReturn(Optional.empty());
 
-        assertThatThrownBy(() -> useCase.execute(new UserLoginInputDTO(username.asString(), password.asString())))
+        assertThatThrownBy(() -> useCase.execute(new UserLoginInputDto(username.asString(), password.asString())))
                 .isInstanceOf(InvalidCredentialsException.class);
         verify(tokenProvider, never()).generateAccessToken(any());
     }
@@ -86,7 +86,7 @@ class UserLoginUseCaseTest {
         when(userRepository.findByUsername(username)).thenReturn(Optional.of(user));
         when(passwordEncoder.matches(wrongPassword, password.asString())).thenReturn(false);
 
-        assertThatThrownBy(() -> useCase.execute(new UserLoginInputDTO(username.asString(), wrongPassword)))
+        assertThatThrownBy(() -> useCase.execute(new UserLoginInputDto(username.asString(), wrongPassword)))
                 .isInstanceOf(InvalidCredentialsException.class);
         verify(tokenProvider, never()).generateAccessToken(any());
     }

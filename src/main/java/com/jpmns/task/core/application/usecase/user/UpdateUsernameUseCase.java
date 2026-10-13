@@ -3,8 +3,9 @@ package com.jpmns.task.core.application.usecase.user;
 import org.springframework.stereotype.Service;
 
 import com.jpmns.task.core.application.port.persistence.repository.UserRepository;
-import com.jpmns.task.core.application.usecase.user.dto.input.UpdateUsernameInputDTO;
-import com.jpmns.task.core.application.usecase.user.dto.output.UpdateUsernameOutputDTO;
+import com.jpmns.task.core.application.usecase.user.dto.input.UpdateUsernameInputDto;
+import com.jpmns.task.core.application.usecase.user.dto.output.UpdateUsernameOutputDto;
+import com.jpmns.task.core.application.usecase.user.exception.SameUsernameException;
 import com.jpmns.task.core.application.usecase.user.exception.UserNotFoundException;
 import com.jpmns.task.core.application.usecase.user.exception.UsernameAlreadyExistsException;
 import com.jpmns.task.core.domain.common.valueobject.IdValueObject;
@@ -18,10 +19,14 @@ public class UpdateUsernameUseCase {
         this.userRepository = userRepository;
     }
 
-    public UpdateUsernameOutputDTO execute(UpdateUsernameInputDTO input) {
+    public UpdateUsernameOutputDto execute(UpdateUsernameInputDto input) {
         var userIdValue = IdValueObject.of(input.userId()).getValueOrThrow();
 
         var user = userRepository.findById(userIdValue).orElseThrow(UserNotFoundException::new);
+
+        if (user.getUsername().asString().equals(input.newUsername())) {
+            throw new SameUsernameException();
+        }
 
         user.updateUsername(input.newUsername());
 
@@ -31,6 +36,6 @@ public class UpdateUsernameUseCase {
 
         var saved = userRepository.save(user);
 
-        return new UpdateUsernameOutputDTO(saved.getId().asString(), saved.getUsername().asString());
+        return new UpdateUsernameOutputDto(saved.getId().asString(), saved.getUsername().asString());
     }
 }

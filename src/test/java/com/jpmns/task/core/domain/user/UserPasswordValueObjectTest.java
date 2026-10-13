@@ -8,12 +8,13 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
 import com.jpmns.task.core.domain.user.valueobject.UserPasswordValueObject;
+import com.jpmns.task.core.domain.user.valueobject.exception.InvalidPasswordException;
 
 class UserPasswordValueObjectTest {
 
     @Test
-    @DisplayName("Should create a valid UserPasswordValueObject with exactly 8 characters")
-    void shouldCreateValidPasswordWithMinLength() {
+    @DisplayName("Should create a valid UserPasswordValueObject when it has exactly 8 characters")
+    void shouldCreateValidPasswordWhenItHasMinLength() {
         var password = "12345678";
 
         var result = UserPasswordValueObject.of(password);
@@ -23,8 +24,8 @@ class UserPasswordValueObjectTest {
     }
 
     @Test
-    @DisplayName("Should create a valid UserPasswordValueObject with more than 8 characters")
-    void shouldCreateValidPasswordWithMoreThanMinLength() {
+    @DisplayName("Should create a valid UserPasswordValueObject when it has more than 8 characters")
+    void shouldCreateValidPasswordWhenItHasMoreThanMinLength() {
         var password = "raw-password";
 
         var result = UserPasswordValueObject.of(password);
@@ -34,8 +35,8 @@ class UserPasswordValueObjectTest {
     }
 
     @Test
-    @DisplayName("Should accept an encoded bcrypt password")
-    void shouldAcceptEncodedBcryptPassword() {
+    @DisplayName("Should accept an encoded bcrypt password when the value is a bcrypt hash")
+    void shouldAcceptEncodedBcryptPasswordWhenValueIsBcryptHash() {
         var encoded = "$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy";
 
         var result = UserPasswordValueObject.of(encoded);
@@ -50,6 +51,7 @@ class UserPasswordValueObjectTest {
         var result = UserPasswordValueObject.of(null);
 
         assertThat(result.isFail()).isTrue();
+        assertThat(result.getError()).isInstanceOf(InvalidPasswordException.class);
     }
 
     @ParameterizedTest
@@ -59,5 +61,6 @@ class UserPasswordValueObjectTest {
         var result = UserPasswordValueObject.of(password);
 
         assertThat(result.isFail()).isTrue();
+        assertThat(result.getError()).isInstanceOf(InvalidPasswordException.class);
     }
 }

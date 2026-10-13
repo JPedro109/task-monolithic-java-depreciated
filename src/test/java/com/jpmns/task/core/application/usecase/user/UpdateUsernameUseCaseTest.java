@@ -17,7 +17,8 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.jpmns.task.core.application.port.persistence.repository.UserRepository;
-import com.jpmns.task.core.application.usecase.user.dto.input.UpdateUsernameInputDTO;
+import com.jpmns.task.core.application.usecase.user.dto.input.UpdateUsernameInputDto;
+import com.jpmns.task.core.application.usecase.user.exception.SameUsernameException;
 import com.jpmns.task.core.application.usecase.user.exception.UserNotFoundException;
 import com.jpmns.task.core.application.usecase.user.exception.UsernameAlreadyExistsException;
 import com.jpmns.task.core.domain.common.exception.DomainException;
@@ -39,7 +40,7 @@ class UpdateUsernameUseCaseTest {
     void shouldUpdateUsernameSuccessfully() {
         var user = UserFixture.aUser();
         var userId = user.getId();
-        var input = new UpdateUsernameInputDTO(userId.asString(), NEW_USERNAME);
+        var input = new UpdateUsernameInputDto(userId.asString(), NEW_USERNAME);
         var savedUser = UserFixture.aUser();
 
         when(userRepository.findById(userId)).thenReturn(Optional.of(user));
@@ -54,10 +55,26 @@ class UpdateUsernameUseCaseTest {
     }
 
     @Test
+    @DisplayName("Should throw when new username equals the current one")
+    void shouldThrowWhenNewUsernameEqualsTheCurrentOne() {
+        var user = UserFixture.aUser();
+        var userId = user.getId();
+        var currentUsername = user.getUsername().asString();
+        var input = new UpdateUsernameInputDto(userId.asString(), currentUsername);
+
+        when(userRepository.findById(userId)).thenReturn(Optional.of(user));
+
+        assertThatThrownBy(() -> useCase.execute(input))
+                .isInstanceOf(SameUsernameException.class);
+
+        verify(userRepository, never()).save(any());
+    }
+
+    @Test
     @DisplayName("Should throw when user ID is invalid")
     void shouldThrowWhenUserIdIsInvalid() {
         var invalidUserId = "not-a-valid-uuid";
-        var input = new UpdateUsernameInputDTO(invalidUserId, NEW_USERNAME);
+        var input = new UpdateUsernameInputDto(invalidUserId, NEW_USERNAME);
 
         assertThatThrownBy(() -> useCase.execute(input))
                 .isInstanceOf(DomainException.class);
@@ -71,7 +88,7 @@ class UpdateUsernameUseCaseTest {
     void shouldThrowWhenUserNotFound() {
         var user = UserFixture.aUser();
         var userId = user.getId();
-        var input = new UpdateUsernameInputDTO(userId.asString(), NEW_USERNAME);
+        var input = new UpdateUsernameInputDto(userId.asString(), NEW_USERNAME);
 
         when(userRepository.findById(userId)).thenReturn(Optional.empty());
 
@@ -86,7 +103,7 @@ class UpdateUsernameUseCaseTest {
     void shouldThrowWhenUsernameAlreadyExists() {
         var user = UserFixture.aUser();
         var userId = user.getId();
-        var input = new UpdateUsernameInputDTO(userId.asString(), NEW_USERNAME);
+        var input = new UpdateUsernameInputDto(userId.asString(), NEW_USERNAME);
 
         when(userRepository.findById(userId)).thenReturn(Optional.of(user));
         when(userRepository.existsByUsername(any())).thenReturn(true);

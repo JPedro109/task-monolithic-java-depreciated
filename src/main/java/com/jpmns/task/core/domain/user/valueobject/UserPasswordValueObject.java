@@ -3,7 +3,7 @@ package com.jpmns.task.core.domain.user.valueobject;
 import com.jpmns.task.core.domain.user.valueobject.exception.InvalidPasswordException;
 import com.jpmns.task.shared.type.Result;
 
-public class UserPasswordValueObject {
+public final class UserPasswordValueObject {
 
     private static final int MIN_LENGTH = 8;
 

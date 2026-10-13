@@ -16,7 +16,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.jpmns.task.core.application.port.persistence.repository.UserRepository;
-import com.jpmns.task.core.application.usecase.user.dto.input.DeleteUserInputDTO;
+import com.jpmns.task.core.application.usecase.user.dto.input.DeleteUserInputDto;
 import com.jpmns.task.core.application.usecase.user.exception.UserNotFoundException;
 import com.jpmns.task.shared.fixture.UserFixture;
 
@@ -36,7 +36,7 @@ class DeleteUserUseCaseTest {
 
         when(userRepository.findById(user.getId())).thenReturn(Optional.of(user));
 
-        useCase.execute(new DeleteUserInputDTO(user.getId().asString()));
+        useCase.execute(new DeleteUserInputDto(user.getId().asString()));
 
         verify(userRepository).deleteById(user.getId());
     }
@@ -49,7 +49,7 @@ class DeleteUserUseCaseTest {
 
         when(userRepository.findById(userId)).thenReturn(Optional.empty());
 
-        assertThatThrownBy(() -> useCase.execute(new DeleteUserInputDTO(userId.asString())))
+        assertThatThrownBy(() -> useCase.execute(new DeleteUserInputDto(userId.asString())))
                 .isInstanceOf(UserNotFoundException.class);
 
         verify(userRepository, never()).deleteById(any());
