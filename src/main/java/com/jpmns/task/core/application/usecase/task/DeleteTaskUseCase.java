@@ -1,6 +1,7 @@
 package com.jpmns.task.core.application.usecase.task;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.jpmns.task.core.application.port.persistence.repository.TaskRepository;
 import com.jpmns.task.core.application.usecase.task.dto.input.DeleteTaskInputDto;
@@ -17,6 +18,7 @@ public class DeleteTaskUseCase {
         this.taskRepository = taskRepository;
     }
 
+    @Transactional
     public void execute(DeleteTaskInputDto input) {
         var taskIdValue = IdValueObject.of(input.taskId()).getValueOrThrow();
 
