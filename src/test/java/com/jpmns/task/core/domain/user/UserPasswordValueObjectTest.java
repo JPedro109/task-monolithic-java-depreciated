@@ -46,6 +46,25 @@ class UserPasswordValueObjectTest {
     }
 
     @Test
+    @DisplayName("Should be equal when two instances have the same value")
+    void shouldBeEqualWhenSameValue() {
+        var a = UserPasswordValueObject.of("raw-password").getValue();
+        var b = UserPasswordValueObject.of("raw-password").getValue();
+
+        assertThat(a).isEqualTo(b);
+        assertThat(a.hashCode()).isEqualTo(b.hashCode());
+    }
+
+    @Test
+    @DisplayName("Should not be equal when two instances have different values")
+    void shouldNotBeEqualWhenDifferentValue() {
+        var a = UserPasswordValueObject.of("raw-password").getValue();
+        var b = UserPasswordValueObject.of("other-password").getValue();
+
+        assertThat(a).isNotEqualTo(b);
+    }
+
+    @Test
     @DisplayName("Should fail when password is null")
     void shouldFailWhenPasswordIsNull() {
         var result = UserPasswordValueObject.of(null);

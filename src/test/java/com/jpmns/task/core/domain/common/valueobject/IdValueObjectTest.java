@@ -36,6 +36,25 @@ class IdValueObjectTest {
         assertThat(result.isFail()).isFalse();
     }
 
+    @Test
+    @DisplayName("Should be equal when two instances have the same value")
+    void shouldBeEqualWhenSameValue() {
+        var a = IdValueObject.of(VALID_UUID).getValue();
+        var b = IdValueObject.of(VALID_UUID).getValue();
+
+        assertThat(a).isEqualTo(b);
+        assertThat(a.hashCode()).isEqualTo(b.hashCode());
+    }
+
+    @Test
+    @DisplayName("Should not be equal when two instances have different values")
+    void shouldNotBeEqualWhenDifferentValue() {
+        var a = IdValueObject.of(VALID_UUID).getValue();
+        var b = IdValueObject.of("c3d4e5f6-a7b8-9012-cdef-123456789012").getValue();
+
+        assertThat(a).isNotEqualTo(b);
+    }
+
     @ParameterizedTest
     @DisplayName("Should fail for null, empty or malformed UUID strings")
     @NullAndEmptySource

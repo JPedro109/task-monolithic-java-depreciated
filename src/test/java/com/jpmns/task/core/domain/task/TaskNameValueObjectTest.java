@@ -45,6 +45,25 @@ class TaskNameValueObjectTest {
     }
 
     @Test
+    @DisplayName("Should be equal when two instances have the same value")
+    void shouldBeEqualWhenSameValue() {
+        var a = TaskNameValueObject.of("Buy groceries").getValue();
+        var b = TaskNameValueObject.of("Buy groceries").getValue();
+
+        assertThat(a).isEqualTo(b);
+        assertThat(a.hashCode()).isEqualTo(b.hashCode());
+    }
+
+    @Test
+    @DisplayName("Should not be equal when two instances have different values")
+    void shouldNotBeEqualWhenDifferentValue() {
+        var a = TaskNameValueObject.of("Buy groceries").getValue();
+        var b = TaskNameValueObject.of("Clean the house").getValue();
+
+        assertThat(a).isNotEqualTo(b);
+    }
+
+    @Test
     @DisplayName("Should fail when name exceeds 255 characters")
     void shouldFailWhenNameExceedsMaxLength() {
         var name = "a".repeat(256);
