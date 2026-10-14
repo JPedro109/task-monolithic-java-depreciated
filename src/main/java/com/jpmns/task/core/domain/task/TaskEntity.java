@@ -17,7 +17,7 @@ public class TaskEntity extends Entity {
     public TaskEntity(String id,
                       String userId,
                       String taskName,
-                      Boolean finished,
+                      boolean finished,
                       Instant createdAt,
                       Instant updatedAt) {
         super(id, createdAt);
@@ -34,7 +34,7 @@ public class TaskEntity extends Entity {
         this.updatedAt = updatedAt;
     }
 
-    public TaskEntity(String id, String userId, String taskName, Boolean finished) {
+    public TaskEntity(String id, String userId, String taskName, boolean finished) {
         this(id, userId, taskName, finished, null, null);
     }
 
