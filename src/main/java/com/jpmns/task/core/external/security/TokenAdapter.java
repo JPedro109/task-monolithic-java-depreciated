@@ -15,6 +15,7 @@ import com.jpmns.task.core.application.port.security.dto.DecodeTokenDto;
 import com.jpmns.task.core.application.port.security.exception.InvalidTokenException;
 
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 
@@ -54,8 +55,8 @@ public class TokenAdapter implements Token {
             var claims = parseClaims(token);
 
             return new DecodeTokenDto(claims.getSubject());
-        } catch (Exception e) {
-            LOGGER.error("Invalid JWT token: {}", e.getMessage(), e);
+        } catch (JwtException | IllegalArgumentException e) {
+            LOGGER.warn("Invalid JWT token: {}", e.getMessage());
             throw new InvalidTokenException();
         }
     }
