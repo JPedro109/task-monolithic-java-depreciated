@@ -5,7 +5,7 @@ import java.util.UUID;
 import com.jpmns.task.core.domain.task.TaskEntity;
 import com.jpmns.task.core.external.persistence.model.TaskJpaModel;
 
-public class TaskMapper {
+public final class TaskMapper {
 
     private TaskMapper() { }
 

@@ -5,7 +5,7 @@ import java.util.UUID;
 import com.jpmns.task.core.domain.user.UserEntity;
 import com.jpmns.task.core.external.persistence.model.UserJpaModel;
 
-public class UserMapper {
+public final class UserMapper {
 
     private UserMapper() { }
 
