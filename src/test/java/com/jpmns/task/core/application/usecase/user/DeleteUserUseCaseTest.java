@@ -30,8 +30,8 @@ class DeleteUserUseCaseTest {
     private DeleteUserUseCase useCase;
 
     @Test
-    @DisplayName("Should delete a user successfully")
-    void shouldDeleteUserSuccessfully() {
+    @DisplayName("Should delete a user when the user exists")
+    void shouldDeleteUserWhenUserExists() {
         var user = UserFixture.aUser();
 
         when(userRepository.findById(user.getId())).thenReturn(Optional.of(user));

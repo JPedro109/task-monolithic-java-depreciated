@@ -14,17 +14,13 @@ class UserEntityTest {
     private static final String VALID_ID = "00000000-0000-0000-0000-000000000001";
 
     @Test
-    @DisplayName("Should create a user with valid data")
-    void shouldCreateUserWithValidData() {
-        var id = VALID_ID;
-        var username = "username";
-        var password = "password";
+    @DisplayName("Should create a user when data is valid")
+    void shouldCreateUserWhenDataIsValid() {
+        var user = UserFixture.aUser();
 
-        var user = new UserEntity(id, username, password);
-
-        assertThat(user.getId().asString()).isEqualTo(id);
-        assertThat(user.getUsername().asString()).isEqualTo(username);
-        assertThat(user.getPassword().asString()).isEqualTo(password);
+        assertThat(user.getId().asString()).isEqualTo(UserFixture.DEFAULT_ID);
+        assertThat(user.getUsername().asString()).isEqualTo(UserFixture.DEFAULT_USERNAME);
+        assertThat(user.getPassword().asString()).isEqualTo(UserFixture.DEFAULT_PASSWORD);
         assertThat(user.getCreatedAt()).isNotNull();
     }
 

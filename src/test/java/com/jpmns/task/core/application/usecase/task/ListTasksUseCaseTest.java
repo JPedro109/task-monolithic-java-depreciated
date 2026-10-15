@@ -1,6 +1,7 @@
 package com.jpmns.task.core.application.usecase.task;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.util.List;
@@ -27,8 +28,8 @@ class ListTasksUseCaseTest {
     private ListTasksUseCase useCase;
 
     @Test
-    @DisplayName("Should return all tasks for a given user")
-    void shouldReturnAllTasksForUser() {
+    @DisplayName("Should return all tasks when the user has tasks")
+    void shouldReturnAllTasksWhenUserHasTasks() {
         var taskOne = TaskFixture.aTask();
         var taskTwo = TaskFixture.aTask();
         var taskThree = TaskFixture.aTask();
@@ -45,6 +46,8 @@ class ListTasksUseCaseTest {
         assertThat(output.getFirst().taskName()).isEqualTo(taskOne.getTaskName().asString());
         assertThat(output.getFirst().finished()).isFalse();
         assertThat(output.getFirst().createdAt()).isNotNull();
+
+        verify(taskRepository).findAllByUserId(userId);
     }
 
     @Test
@@ -58,5 +61,7 @@ class ListTasksUseCaseTest {
         var output = useCase.execute(new ListTasksInputDto(userId.asString()));
 
         assertThat(output).isEmpty();
+
+        verify(taskRepository).findAllByUserId(userId);
     }
 }

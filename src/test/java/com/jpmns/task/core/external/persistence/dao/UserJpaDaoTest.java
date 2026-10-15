@@ -21,6 +21,9 @@ import com.jpmns.task.shared.fixture.UserFixture;
 @DisplayName("UserJpaDao Tests")
 class UserJpaDaoTest {
 
+    private static final UUID UNKNOWN_USER_ID = UUID.fromString("00000000-0000-0000-0000-000000000001");
+    private static final UUID DUPLICATE_USER_ID = UUID.fromString("00000000-0000-0000-0000-000000000002");
+
     @Autowired
     private UserJpaDao userJpaDao;
 
@@ -30,8 +33,8 @@ class UserJpaDaoTest {
     }
 
     @Test
-    @DisplayName("Should save a user and return it with a populated id")
-    void shouldSaveUser() {
+    @DisplayName("Should save a user and return it with a populated id when the user is new")
+    void shouldSaveUserWhenUserIsNew() {
         var user = UserFixture.aUser();
         var model = buildUser(user);
 
@@ -62,7 +65,7 @@ class UserJpaDaoTest {
     @Test
     @DisplayName("Should return empty Optional when user id does not exist")
     void shouldReturnEmptyWhenUserNotFoundById() {
-        var found = userJpaDao.findById(UUID.randomUUID());
+        var found = userJpaDao.findById(UNKNOWN_USER_ID);
 
         assertThat(found).isEmpty();
     }
@@ -115,8 +118,8 @@ class UserJpaDaoTest {
     }
 
     @Test
-    @DisplayName("Should delete a user by id")
-    void shouldDeleteUserById() {
+    @DisplayName("Should delete a user when the user id exists")
+    void shouldDeleteUserWhenUserIdExists() {
         var user = UserFixture.aUser();
         var model = buildUser(user);
 
@@ -152,7 +155,7 @@ class UserJpaDaoTest {
         userJpaDao.save(model);
         userJpaDao.flush();
         var duplicate = new UserJpaModel(
-                UUID.randomUUID(),
+                DUPLICATE_USER_ID,
                 model.getUsername(),
                 model.getPassword(),
                 Instant.now(),
@@ -166,8 +169,8 @@ class UserJpaDaoTest {
     }
 
     @Test
-    @DisplayName("Should find all saved users")
-    void shouldFindAllUsers() {
+    @DisplayName("Should find all users when users are saved")
+    void shouldFindAllUsersWhenUsersAreSaved() {
         var userOne = UserFixture.aUser();
         var model = buildUser(userOne);
         userJpaDao.save(model);

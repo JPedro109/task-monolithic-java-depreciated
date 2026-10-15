@@ -14,8 +14,8 @@ import com.jpmns.task.shared.fixture.UserFixture;
 class UserMapperTest {
 
     @Test
-    @DisplayName("Should map a UserEntity to a UserJpaModel correctly")
-    void shouldMapEntityToModel() {
+    @DisplayName("Should map a UserEntity to a UserJpaModel when the entity is valid")
+    void shouldMapEntityToModelWhenEntityIsValid() {
         var user = UserFixture.aUser();
         var userId = user.getId();
         var username = user.getUsername();
@@ -31,8 +31,8 @@ class UserMapperTest {
     }
 
     @Test
-    @DisplayName("Should map a UserJpaModel to a UserEntity correctly")
-    void shouldMapModelToDomain() {
+    @DisplayName("Should map a UserJpaModel to a UserEntity when the model is valid")
+    void shouldMapModelToDomainWhenModelIsValid() {
         var user = UserFixture.aUser();
         var userId = user.getId();
         var username = user.getUsername();

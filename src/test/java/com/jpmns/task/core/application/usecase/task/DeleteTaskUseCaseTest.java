@@ -32,8 +32,8 @@ class DeleteTaskUseCaseTest {
     private DeleteTaskUseCase useCase;
 
     @Test
-    @DisplayName("Should delete a task successfully")
-    void shouldDeleteTaskSuccessfully() {
+    @DisplayName("Should delete a task when the task exists and belongs to the user")
+    void shouldDeleteTaskWhenTaskExistsAndBelongsToUser() {
         var task = TaskFixture.aTask();
         var taskId = task.getId();
         var userId = task.getUserId();

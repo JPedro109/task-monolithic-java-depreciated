@@ -33,8 +33,8 @@ class MarkTaskAsFinishedUseCaseTest {
     private MarkTaskAsFinishedUseCase useCase;
 
     @Test
-    @DisplayName("Should mark a task as finished successfully")
-    void shouldMarkTaskAsFinishedSuccessfully() {
+    @DisplayName("Should mark a task as finished when the task exists and belongs to the user")
+    void shouldMarkTaskAsFinishedWhenTaskExistsAndBelongsToUser() {
         var task = TaskFixture.aTask();
         var taskId = task.getId();
         var userId = task.getUserId();

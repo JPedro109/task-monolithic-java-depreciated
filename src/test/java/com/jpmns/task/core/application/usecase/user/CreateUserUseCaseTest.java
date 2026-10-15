@@ -33,8 +33,8 @@ class CreateUserUseCaseTest {
     private CreateUserUseCase useCase;
 
     @Test
-    @DisplayName("Should create a user successfully")
-    void shouldCreateUserSuccessfully() {
+    @DisplayName("Should create a user when the username is available")
+    void shouldCreateUserWhenUsernameIsAvailable() {
         var user = UserFixture.aUser();
         var username = user.getUsername();
         var password = user.getPassword();

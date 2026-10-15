@@ -7,20 +7,15 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.ResultActions;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.jayway.jsonpath.JsonPath;
 import com.jpmns.task.integration.common.abstracts.IntegrationTestBase;
 import com.jpmns.task.integration.common.sql.SqlCreateSeed;
 
 @DisplayName("Auth Integration Tests")
-@Import(ObjectMapper.class)
 class AuthIntegrationTest extends IntegrationTestBase {
-    @Autowired
-    protected ObjectMapper objectMapper;
 
     @Nested
     @DisplayName("POST /api/v1/auth/login")
@@ -106,8 +101,7 @@ class AuthIntegrationTest extends IntegrationTestBase {
                             .content(loginBody))
                     .andExpect(status().isOk())
                     .andReturn();
-            var json = objectMapper.readTree(response.getResponse().getContentAsString());
-            var refreshToken = json.get("refreshToken").asText();
+            String refreshToken = JsonPath.read(response.getResponse().getContentAsString(), "$.refreshToken");
 
             perform(refreshToken)
                     .andExpect(status().isOk())

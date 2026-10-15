@@ -90,8 +90,8 @@ class TaskJpaDaoTest {
     }
 
     @Test
-    @DisplayName("Should delete a task by id")
-    void shouldDeleteTaskById() {
+    @DisplayName("Should delete a task when the task id exists")
+    void shouldDeleteTaskWhenTaskIdExists() {
         var task = TaskFixture.aTask();
         var model = buildTask(task, userId);
 
@@ -111,10 +111,10 @@ class TaskJpaDaoTest {
 
         taskJpaDao.save(model);
         model.setTaskName("Updated name");
-
         taskJpaDao.save(model);
 
         var found = taskJpaDao.findById(model.getId());
+
         assertThat(found).isPresent();
         assertThat(found.get().getTaskName()).isEqualTo("Updated name");
     }
@@ -162,8 +162,8 @@ class TaskJpaDaoTest {
     }
 
     @Test
-    @DisplayName("Should find all saved tasks")
-    void shouldFindAllTasks() {
+    @DisplayName("Should find all tasks when tasks are saved")
+    void shouldFindAllTasksWhenTasksAreSaved() {
         var task = TaskFixture.aTask();
         taskJpaDao.save(buildTask(task, userId));
 

@@ -33,8 +33,8 @@ class UpdateTaskUseCaseTest {
     private UpdateTaskUseCase useCase;
 
     @Test
-    @DisplayName("Should update the task name successfully")
-    void shouldUpdateTaskNameSuccessfully() {
+    @DisplayName("Should update the task name when input is valid")
+    void shouldUpdateTaskNameWhenInputIsValid() {
         var task = TaskFixture.aTask();
         var taskId = task.getId();
         var userId = task.getUserId();

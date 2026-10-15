@@ -29,8 +29,8 @@ class CreateTaskUseCaseTest {
     private CreateTaskUseCase useCase;
 
     @Test
-    @DisplayName("Should create a task successfully")
-    void shouldCreateTaskSuccessfully() {
+    @DisplayName("Should create a task when input is valid")
+    void shouldCreateTaskWhenInputIsValid() {
         var savedTask = TaskFixture.aTask();
         var taskName = savedTask.getTaskName();
         var userId = savedTask.getUserId();

@@ -36,8 +36,8 @@ class UpdateUsernameUseCaseTest {
     private UpdateUsernameUseCase useCase;
 
     @Test
-    @DisplayName("Should update username successfully")
-    void shouldUpdateUsernameSuccessfully() {
+    @DisplayName("Should update username when the new username is available")
+    void shouldUpdateUsernameWhenNewUsernameIsAvailable() {
         var user = UserFixture.aUser();
         var userId = user.getId();
         var input = new UpdateUsernameInputDto(userId.asString(), NEW_USERNAME);

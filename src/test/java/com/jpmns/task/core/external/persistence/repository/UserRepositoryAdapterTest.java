@@ -148,8 +148,8 @@ class UserRepositoryAdapterTest {
     }
 
     @Test
-    @DisplayName("Should delete a user by id")
-    void shouldDeleteUserById() {
+    @DisplayName("Should delete a user when the id is given")
+    void shouldDeleteUserWhenIdIsGiven() {
         var user = UserFixture.aUser();
         var userId = user.getId();
         var id = IdValueObject.of(userId.asString()).getValue();

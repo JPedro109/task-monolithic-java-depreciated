@@ -25,6 +25,7 @@ import com.jpmns.task.core.application.usecase.user.RefreshUserTokenUseCase;
 import com.jpmns.task.core.application.usecase.user.UserLoginUseCase;
 import com.jpmns.task.core.application.usecase.user.dto.output.RefreshUserTokenOutputDto;
 import com.jpmns.task.core.application.usecase.user.dto.output.UserLoginOutputDto;
+import com.jpmns.task.core.application.port.security.exception.InvalidTokenException;
 import com.jpmns.task.core.application.usecase.user.exception.InvalidCredentialsException;
 import com.jpmns.task.core.presentation.controller.common.handler.GlobalExceptionHandler;
 import com.jpmns.task.core.presentation.controller.common.resolver.AuthenticatedUserResolver;
@@ -142,7 +143,7 @@ class AuthControllerTest {
         void shouldReturn401WhenRefreshTokenIsInvalid() throws Exception {
             var invalidToken = "invalid-token";
 
-            when(refreshUserTokenUseCase.execute(any())).thenThrow(new InvalidCredentialsException());
+            when(refreshUserTokenUseCase.execute(any())).thenThrow(new InvalidTokenException());
 
             perform(invalidToken)
                     .andExpect(status().isUnauthorized());

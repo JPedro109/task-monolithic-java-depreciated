@@ -130,8 +130,8 @@ class TaskRepositoryAdapterTest {
     }
 
     @Test
-    @DisplayName("Should delete a task by id")
-    void shouldDeleteTaskById() {
+    @DisplayName("Should delete a task when the id is given")
+    void shouldDeleteTaskWhenIdIsGiven() {
         var task = TaskFixture.aTask();
         var taskId = task.getId();
         var id = IdValueObject.of(taskId.asString()).getValue();
