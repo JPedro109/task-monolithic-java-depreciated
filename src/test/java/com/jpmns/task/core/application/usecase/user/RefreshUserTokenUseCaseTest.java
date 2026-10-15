@@ -18,7 +18,9 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.jpmns.task.core.application.port.persistence.repository.UserRepository;
 import com.jpmns.task.core.application.port.security.Token;
+import com.jpmns.task.core.application.port.security.TokenType;
 import com.jpmns.task.core.application.port.security.dto.DecodeTokenDto;
+import com.jpmns.task.core.application.port.security.exception.InvalidTokenException;
 import com.jpmns.task.core.application.usecase.user.dto.input.RefreshUserTokenInputDto;
 import com.jpmns.task.core.application.usecase.user.exception.UserNotFoundException;
 import com.jpmns.task.core.domain.common.valueobject.exception.InvalidIdValueObjectException;
@@ -47,7 +49,7 @@ class RefreshUserTokenUseCaseTest {
         var userId = user.getId();
         var input = new RefreshUserTokenInputDto(REFRESH_TOKEN);
 
-        when(token.tokenValidation(REFRESH_TOKEN)).thenReturn(new DecodeTokenDto(userId.asString()));
+        when(token.tokenValidation(REFRESH_TOKEN)).thenReturn(new DecodeTokenDto(userId.asString(), TokenType.REFRESH));
         when(userRepository.findById(userId)).thenReturn(Optional.of(user));
         when(token.generateAccessToken(userId.asString())).thenReturn(newAccessToken);
         when(token.generateRefreshToken(userId.asString())).thenReturn(newRefreshToken);
@@ -66,7 +68,7 @@ class RefreshUserTokenUseCaseTest {
         var invalidUserId = "not-a-valid-uuid";
         var input = new RefreshUserTokenInputDto(REFRESH_TOKEN);
 
-        when(token.tokenValidation(REFRESH_TOKEN)).thenReturn(new DecodeTokenDto(invalidUserId));
+        when(token.tokenValidation(REFRESH_TOKEN)).thenReturn(new DecodeTokenDto(invalidUserId, TokenType.REFRESH));
 
         assertThatThrownBy(() -> useCase.execute(input))
                 .isInstanceOf(InvalidIdValueObjectException.class);
@@ -82,12 +84,29 @@ class RefreshUserTokenUseCaseTest {
         var userId = user.getId();
         var input = new RefreshUserTokenInputDto(REFRESH_TOKEN);
 
-        when(token.tokenValidation(REFRESH_TOKEN)).thenReturn(new DecodeTokenDto(userId.asString()));
+        when(token.tokenValidation(REFRESH_TOKEN)).thenReturn(new DecodeTokenDto(userId.asString(), TokenType.REFRESH));
         when(userRepository.findById(userId)).thenReturn(Optional.empty());
 
         assertThatThrownBy(() -> useCase.execute(input))
                 .isInstanceOf(UserNotFoundException.class);
 
+        verify(token, never()).generateAccessToken(any());
+        verify(token, never()).generateRefreshToken(any());
+    }
+
+    @Test
+    @DisplayName("Should throw when token is not a refresh token")
+    void shouldThrowWhenTokenIsNotRefreshToken() {
+        var user = UserFixture.aUser();
+        var userId = user.getId();
+        var input = new RefreshUserTokenInputDto(REFRESH_TOKEN);
+
+        when(token.tokenValidation(REFRESH_TOKEN)).thenReturn(new DecodeTokenDto(userId.asString(), TokenType.ACCESS));
+
+        assertThatThrownBy(() -> useCase.execute(input))
+                .isInstanceOf(InvalidTokenException.class);
+
+        verify(userRepository, never()).findById(any());
         verify(token, never()).generateAccessToken(any());
         verify(token, never()).generateRefreshToken(any());
     }

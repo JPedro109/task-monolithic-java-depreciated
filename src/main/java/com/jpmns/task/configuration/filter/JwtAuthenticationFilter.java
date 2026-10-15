@@ -16,6 +16,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import com.jpmns.task.core.application.port.security.Token;
+import com.jpmns.task.core.application.port.security.TokenType;
 import com.jpmns.task.core.application.port.security.dto.DecodeTokenDto;
 
 @Component
@@ -48,6 +49,12 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         try {
             decodeTokenDto = this.token.tokenValidation(token);
         } catch (Exception ex) {
+            filterChain.doFilter(request, response);
+
+            return;
+        }
+
+        if (decodeTokenDto.tokenType() != TokenType.ACCESS) {
             filterChain.doFilter(request, response);
 
             return;

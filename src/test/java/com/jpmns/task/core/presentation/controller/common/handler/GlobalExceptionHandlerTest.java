@@ -6,6 +6,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.standaloneSetup;
 
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotBlank;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -24,9 +27,6 @@ import com.jpmns.task.core.application.usecase.user.exception.UserNotFoundExcept
 import com.jpmns.task.core.application.usecase.user.exception.UsernameAlreadyExistsException;
 import com.jpmns.task.core.domain.task.valueobject.exception.InvalidTaskNameException;
 import com.jpmns.task.core.presentation.controller.common.exception.UnauthenticatedException;
-
-import jakarta.validation.Valid;
-import jakarta.validation.constraints.NotBlank;
 
 class GlobalExceptionHandlerTest {
 

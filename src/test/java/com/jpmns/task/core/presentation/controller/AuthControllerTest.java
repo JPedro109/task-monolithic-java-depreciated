@@ -21,11 +21,11 @@ import org.springframework.test.web.servlet.ResultActions;
 
 import com.jpmns.task.configuration.security.SecurityConfig;
 import com.jpmns.task.core.application.port.security.Token;
+import com.jpmns.task.core.application.port.security.exception.InvalidTokenException;
 import com.jpmns.task.core.application.usecase.user.RefreshUserTokenUseCase;
 import com.jpmns.task.core.application.usecase.user.UserLoginUseCase;
 import com.jpmns.task.core.application.usecase.user.dto.output.RefreshUserTokenOutputDto;
 import com.jpmns.task.core.application.usecase.user.dto.output.UserLoginOutputDto;
-import com.jpmns.task.core.application.port.security.exception.InvalidTokenException;
 import com.jpmns.task.core.application.usecase.user.exception.InvalidCredentialsException;
 import com.jpmns.task.core.presentation.controller.common.handler.GlobalExceptionHandler;
 import com.jpmns.task.core.presentation.controller.common.resolver.AuthenticatedUserResolver;

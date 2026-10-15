@@ -8,6 +8,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import com.jpmns.task.configuration.security.SecurityConfigProperties;
+import com.jpmns.task.core.application.port.security.TokenType;
 import com.jpmns.task.core.application.port.security.exception.InvalidTokenException;
 import com.jpmns.task.shared.fixture.UserFixture;
 
@@ -74,6 +75,18 @@ class TokenAdapterTest {
     }
 
     @Test
+    @DisplayName("Should surface the ACCESS token type when validating an access token")
+    void shouldSurfaceAccessTokenTypeWhenValidatingAccessToken() {
+        var user = UserFixture.aUser();
+        var sub = user.getId().asString();
+        var token = tokenAdapter.generateAccessToken(sub);
+
+        var decoded = tokenAdapter.tokenValidation(token);
+
+        assertThat(decoded.tokenType()).isEqualTo(TokenType.ACCESS);
+    }
+
+    @Test
     @DisplayName("Should validate a valid refresh token and return the correct subject")
     void shouldValidateRefreshTokenAndReturnSubject() {
         var user = UserFixture.aUser();
@@ -84,6 +97,18 @@ class TokenAdapterTest {
 
         assertThat(decoded).isNotNull();
         assertThat(decoded.sub()).isEqualTo(sub);
+    }
+
+    @Test
+    @DisplayName("Should surface the REFRESH token type when validating a refresh token")
+    void shouldSurfaceRefreshTokenTypeWhenValidatingRefreshToken() {
+        var user = UserFixture.aUser();
+        var sub = user.getId().asString();
+        var token = tokenAdapter.generateRefreshToken(sub);
+
+        var decoded = tokenAdapter.tokenValidation(token);
+
+        assertThat(decoded.tokenType()).isEqualTo(TokenType.REFRESH);
     }
 
     @Test

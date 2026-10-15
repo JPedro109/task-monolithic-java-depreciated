@@ -1,5 +1,6 @@
 package com.jpmns.task.integration;
 
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -118,6 +119,24 @@ class AuthIntegrationTest extends IntegrationTestBase {
         }
 
         @Test
+        @DisplayName("Should return 401 when an access token is used on the refresh endpoint")
+        @SqlCreateSeed
+        void shouldReturn401WhenAccessTokenIsUsedOnRefreshEndpoint() throws Exception {
+            var loginBody = """
+                    {"username": "john", "password": "password"}
+                    """;
+            var response = mockMvc.perform(post("/api/v1/auth/login")
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content(loginBody))
+                    .andExpect(status().isOk())
+                    .andReturn();
+            String accessToken = JsonPath.read(response.getResponse().getContentAsString(), "$.accessToken");
+
+            perform(accessToken)
+                    .andExpect(status().isUnauthorized());
+        }
+
+        @Test
         @DisplayName("Should return 400 when refresh token is blank")
         void shouldReturn400WhenRefreshTokenIsBlank() throws Exception {
             var emptyToken = "";
@@ -134,6 +153,30 @@ class AuthIntegrationTest extends IntegrationTestBase {
             return mockMvc.perform(post("/api/v1/auth/refresh")
                     .contentType(MediaType.APPLICATION_JSON)
                     .content(requestBody));
+        }
+    }
+
+    @Nested
+    @DisplayName("Protected routes")
+    class ProtectedRoutes {
+
+        @Test
+        @DisplayName("Should return 401 when a refresh token is used to authenticate a protected route")
+        @SqlCreateSeed
+        void shouldReturn401WhenRefreshTokenAuthenticatesProtectedRoute() throws Exception {
+            var loginBody = """
+                    {"username": "john", "password": "password"}
+                    """;
+            var response = mockMvc.perform(post("/api/v1/auth/login")
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content(loginBody))
+                    .andExpect(status().isOk())
+                    .andReturn();
+            String refreshToken = JsonPath.read(response.getResponse().getContentAsString(), "$.refreshToken");
+
+            mockMvc.perform(get("/api/v1/tasks")
+                            .header("Authorization", "Bearer " + refreshToken))
+                    .andExpect(status().isUnauthorized());
         }
     }
 }

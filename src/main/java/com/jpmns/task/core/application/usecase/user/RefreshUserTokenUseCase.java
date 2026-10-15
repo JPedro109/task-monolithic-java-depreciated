@@ -4,6 +4,8 @@ import org.springframework.stereotype.Service;
 
 import com.jpmns.task.core.application.port.persistence.repository.UserRepository;
 import com.jpmns.task.core.application.port.security.Token;
+import com.jpmns.task.core.application.port.security.TokenType;
+import com.jpmns.task.core.application.port.security.exception.InvalidTokenException;
 import com.jpmns.task.core.application.usecase.user.dto.input.RefreshUserTokenInputDto;
 import com.jpmns.task.core.application.usecase.user.dto.output.RefreshUserTokenOutputDto;
 import com.jpmns.task.core.application.usecase.user.exception.UserNotFoundException;
@@ -22,6 +24,10 @@ public class RefreshUserTokenUseCase {
 
     public RefreshUserTokenOutputDto execute(RefreshUserTokenInputDto input) {
         var decodeTokenDto = token.tokenValidation(input.refreshToken());
+
+        if (decodeTokenDto.tokenType() != TokenType.REFRESH) {
+            throw new InvalidTokenException();
+        }
 
         var userIdValue = IdValueObject.of(decodeTokenDto.sub()).getValueOrThrow();
 

@@ -11,6 +11,7 @@ import org.springframework.stereotype.Component;
 
 import com.jpmns.task.configuration.security.SecurityConfigProperties;
 import com.jpmns.task.core.application.port.security.Token;
+import com.jpmns.task.core.application.port.security.TokenType;
 import com.jpmns.task.core.application.port.security.dto.DecodeTokenDto;
 import com.jpmns.task.core.application.port.security.exception.InvalidTokenException;
 
@@ -25,8 +26,6 @@ public class TokenAdapter implements Token {
     private static final Logger LOGGER = LoggerFactory.getLogger(TokenAdapter.class);
 
     private static final String CLAIM_TOKEN_TYPE = "token_type";
-    private static final String TOKEN_TYPE_ACCESS = "access";
-    private static final String TOKEN_TYPE_REFRESH = "refresh";
 
     private final SecretKey secretKey;
     private final long accessTokenExpirationMs;
@@ -41,12 +40,12 @@ public class TokenAdapter implements Token {
 
     @Override
     public String generateAccessToken(String sub) {
-        return buildToken(sub, accessTokenExpirationMs, TOKEN_TYPE_ACCESS);
+        return buildToken(sub, accessTokenExpirationMs, TokenType.ACCESS);
     }
 
     @Override
     public String generateRefreshToken(String sub) {
-        return buildToken(sub, refreshTokenExpirationMs, TOKEN_TYPE_REFRESH);
+        return buildToken(sub, refreshTokenExpirationMs, TokenType.REFRESH);
     }
 
     @Override
@@ -54,19 +53,21 @@ public class TokenAdapter implements Token {
         try {
             var claims = parseClaims(token);
 
-            return new DecodeTokenDto(claims.getSubject());
+            var tokenType = TokenType.fromValue(claims.get(CLAIM_TOKEN_TYPE, String.class));
+
+            return new DecodeTokenDto(claims.getSubject(), tokenType);
         } catch (JwtException | IllegalArgumentException e) {
             LOGGER.warn("Invalid JWT token: {}", e.getMessage());
             throw new InvalidTokenException();
         }
     }
 
-    private String buildToken(String sub, long expirationMs, String tokenType) {
+    private String buildToken(String sub, long expirationMs, TokenType tokenType) {
         long now = System.currentTimeMillis();
 
         return Jwts.builder()
                 .subject(sub)
-                .claim(CLAIM_TOKEN_TYPE, tokenType)
+                .claim(CLAIM_TOKEN_TYPE, tokenType.getValue())
                 .issuedAt(new Date(now))
                 .expiration(new Date(now + expirationMs))
                 .signWith(secretKey)
