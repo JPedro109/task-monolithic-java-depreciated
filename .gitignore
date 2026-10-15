@@ -39,7 +39,7 @@ out/
 ### CodeGraph ###
 .codegraph
 
-### CodeGraph ###
+### Kiro ###
 .kiro/specs/**/task.meta.json
 .agents/**
 **/.config.kiro
