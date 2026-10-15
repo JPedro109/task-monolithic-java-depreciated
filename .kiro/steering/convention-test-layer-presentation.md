@@ -272,8 +272,8 @@ As seguintes regras devem ser respeitadas:
 - Cada Controller deve possuir uma classe de teste com o sufixo `IntegrationTest`.
 - Toda classe deve estender `IntegrationTestBase`.
 - Nunca configurar manualmente `MockMvc`, `SpringBootTest`, `Testcontainers` ou perfil de execução.
-- Todos os testes devem utilizar Testcontainers.
-- Nunca utilizar banco de dados em memória.
+- Todos os testes **de integração de controllers** devem utilizar Testcontainers.
+- Nunca utilizar banco de dados em memória **nos testes de integração de controllers**. Esta regra se aplica a este tipo de teste, que sobe a aplicação completa e deve exercitar o Postgres real. Os testes de DAO (`@DataJpaTest`), regidos por `convention-test-layer-persistence.md`, usam intencionalmente o banco embarcado (H2) e não estão sujeitos a esta regra.
 - Nunca utilizar mocks da aplicação.
 - Todos os objetos válidos utilizados durante os testes devem ser construídos utilizando Fixtures.
 - Para cenários de dados inválidos, os campos válidos devem ser extraídos de Fixtures normalmente. Apenas o campo inválido deve ser declarado manualmente com o valor que representa a falha. Nunca utilizar uma Fixture que retorne um objeto inválido completo.
@@ -312,7 +312,7 @@ public abstract class IntegrationTestBase {
 
 Todos os recursos externos utilizados pelos testes devem ser executados através de **Testcontainers**.
 
-Não é permitido utilizar bancos de dados em memória, serviços mockados ou configurações específicas para substituir dependências reais da aplicação.
+Nos testes de integração de controllers, não é permitido utilizar bancos de dados em memória, serviços mockados ou configurações específicas para substituir dependências reais da aplicação. (Os testes de DAO com `@DataJpaTest` são a exceção documentada em `convention-test-layer-persistence.md` e usam banco embarcado.)
 
 Toda nova dependência externa adicionada ao projeto deve possuir sua própria configuração de Testcontainer.
 

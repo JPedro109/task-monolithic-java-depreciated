@@ -61,6 +61,8 @@ Os testes de DAO têm como objetivo validar o comportamento das consultas realiz
 
 Devem garantir que consultas, filtros e operações de persistência funcionem corretamente utilizando `@DataJpaTest`, que configura automaticamente um banco de dados embarcado para testes.
 
+> **Banco embarcado (H2) é intencional para testes de DAO.** Diferentemente dos testes de integração de controllers — que sobem a aplicação completa e exigem Postgres via Testcontainers (ver `convention-test-layer-presentation.md`) —, os testes de DAO usam o banco embarcado padrão do `@DataJpaTest`. São testes focados, rápidos e isolados do Docker, cujo objetivo é validar a correção das consultas e do mapeamento JPA. A dependência `com.h2database:h2` no escopo de teste existe exatamente para suportar esses testes e **não** deve ser lida como violação da regra "nunca utilizar banco de dados em memória", que se aplica aos testes de integração de controllers. Caso um teste de DAO precise exercitar comportamento específico do Postgres (ex.: tipos ou constraints próprios), ele pode optar por Testcontainers via `@Import(PostgresContainerConfig.class)` + `@AutoConfigureTestDatabase(replace = NONE)`.
+
 ## Convenções
 
 - Devem utilizar `@DataJpaTest`.
