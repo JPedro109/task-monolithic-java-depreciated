@@ -311,14 +311,22 @@ As seguintes regras devem ser respeitadas:
 - Devem centralizar a leitura do contexto HTTP.
 - Controllers não devem acessar diretamente objetos do framework quando houver um resolver apropriado.
 - Devem possuir responsabilidade única.
+- Por serem stateless e lerem apenas o contexto da requisição (ex.: `SecurityContextHolder`), devem ser classes utilitárias: `final`, com construtor privado e métodos estáticos. Não devem ser registrados como bean nem injetados.
 
 ## ✔ Correto
 
 ```java
-public class AuthenticatedSampleResolver {
+public final class AuthenticatedSampleResolver {
 
-    public AuthenticatedSample resolve() {
-        ...
+    private AuthenticatedSampleResolver() { }
+
+    public static String getSampleId() {
+        var authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null) {
+            throw new UnauthenticatedException("User is not authenticated");
+        }
+
+        return authentication.getPrincipal().toString();
     }
 }
 ```
@@ -436,7 +444,7 @@ public record CreateSampleRequest(
 ## Regras gerais de documentação
 
 - Nunca adicione anotações do SpringDoc (`@Operation`, `@ApiResponse`, `@Schema`, etc.) diretamente nos controllers ou nos records de request/response. Toda documentação pertence às interfaces `*Doc`.
-- Exemplos de corpo de resposta de erro devem seguir o formato Problem Details (RFC 7807): campos `type`, `title`, `status`, `detail`.
+- Exemplos de corpo de resposta de erro devem seguir o formato Problem Details (RFC 9457, que obsoletou a RFC 7807): campos `type`, `title`, `status`, `detail`.
 - Os nomes dos `@ExampleObject` devem ser descritivos e em português, indicando o cenário representado (ex: `"Sample válido"`, `"Nome muito curto (inválido)"`).
 
 ## ✔ Correto

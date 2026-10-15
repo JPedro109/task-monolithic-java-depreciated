@@ -124,7 +124,7 @@ Cada bloco deve representar uma fase claramente identificável da execução, co
 public Sample create(CreateSampleInput input) {
     validate(input);
 
-    Sample sample = mapper.toEntity(input);
+    var sample = mapper.toEntity(input);
 
     repository.save(sample);
 
@@ -139,7 +139,7 @@ public Sample create(CreateSampleInput input) {
 ```java
 public Sample create(CreateSampleInput input) {
     validate(input);
-    Sample sample = mapper.toEntity(input);
+    var sample = mapper.toEntity(input);
     repository.save(sample);
     eventPublisher.publish(new SampleCreatedEvent(sample));
     return mapper.toOutput(sample);
@@ -150,11 +150,11 @@ public Sample create(CreateSampleInput input) {
 
 ```java
 public Token process(ProcessSampleInput input) {
-    Sample sample = findSample(input.name());
+    var sample = findSample(input.name());
 
     validateSample(sample, input.value());
 
-    Token token = tokenProvider.generate(sample);
+    var token = tokenProvider.generate(sample);
 
     audit(sample);
 
@@ -221,7 +221,7 @@ Sempre que possível:
 public Sample execute(CreateSampleInput input) {
     validate(input);
 
-    Sample sample = createSample(input);
+    var sample = createSample(input);
 
     save(sample);
 
