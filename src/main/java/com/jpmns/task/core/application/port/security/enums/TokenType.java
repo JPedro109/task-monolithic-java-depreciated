@@ -1,4 +1,4 @@
-package com.jpmns.task.core.application.port.security;
+package com.jpmns.task.core.application.port.security.enums;
 
 public enum TokenType {
 

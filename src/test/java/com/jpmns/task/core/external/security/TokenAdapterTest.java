@@ -8,7 +8,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import com.jpmns.task.configuration.security.SecurityConfigProperties;
-import com.jpmns.task.core.application.port.security.TokenType;
+import com.jpmns.task.core.application.port.security.enums.TokenType;
 import com.jpmns.task.core.application.port.security.exception.InvalidTokenException;
 import com.jpmns.task.shared.fixture.UserFixture;
 

@@ -16,7 +16,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import com.jpmns.task.core.application.port.security.Token;
-import com.jpmns.task.core.application.port.security.TokenType;
+import com.jpmns.task.core.application.port.security.enums.TokenType;
 import com.jpmns.task.core.application.port.security.dto.DecodeTokenDto;
 
 @Component

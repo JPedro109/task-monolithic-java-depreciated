@@ -18,7 +18,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.jpmns.task.core.application.port.persistence.repository.UserRepository;
 import com.jpmns.task.core.application.port.security.Token;
-import com.jpmns.task.core.application.port.security.TokenType;
+import com.jpmns.task.core.application.port.security.enums.TokenType;
 import com.jpmns.task.core.application.port.security.dto.DecodeTokenDto;
 import com.jpmns.task.core.application.port.security.exception.InvalidTokenException;
 import com.jpmns.task.core.application.usecase.user.dto.input.RefreshUserTokenInputDto;
