@@ -11,8 +11,8 @@ import org.springframework.stereotype.Component;
 
 import com.jpmns.task.configuration.security.SecurityConfigProperties;
 import com.jpmns.task.core.application.port.security.Token;
-import com.jpmns.task.core.application.port.security.enums.TokenType;
 import com.jpmns.task.core.application.port.security.dto.DecodeTokenDto;
+import com.jpmns.task.core.application.port.security.enums.TokenType;
 import com.jpmns.task.core.application.port.security.exception.InvalidTokenException;
 
 import io.jsonwebtoken.Claims;

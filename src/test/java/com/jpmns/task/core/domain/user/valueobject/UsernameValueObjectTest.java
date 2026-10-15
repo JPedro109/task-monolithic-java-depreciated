@@ -1,4 +1,4 @@
-package com.jpmns.task.core.domain.user;
+package com.jpmns.task.core.domain.user.valueobject;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -8,7 +8,6 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.NullAndEmptySource;
 import org.junit.jupiter.params.provider.ValueSource;
 
-import com.jpmns.task.core.domain.user.valueobject.UsernameValueObject;
 import com.jpmns.task.core.domain.user.valueobject.exception.InvalidUsernameException;
 
 class UsernameValueObjectTest {
